@@ -1,0 +1,26 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "tenDangNhap": "admin",
+      "matKhau": "123456",
+      "ten": "Admin",
+      "vaiTro": "ADMIN"
+    },
+    {
+      "id": 2,
+      "tenDangNhap": "teacher",
+      "matKhau": "123456",
+      "ten": "Teacher",
+      "vaiTro": "GV"
+    },
+    {
+      "id": 3,
+      "tenDangNhap": "student",
+      "matKhau": "123456",
+      "ten": "Student",
+      "vaiTro": "HS"
+    }
+  ],
+  "tokens": []
+}
