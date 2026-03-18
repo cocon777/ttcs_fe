@@ -1,6 +1,6 @@
-import type { newUser } from "./interface";
+import type { nguoiDungMoi } from "./interface";
 interface RoleTabsProps {
-  values: newUser;
+  values: nguoiDungMoi;
   onChange: (name: string, newValue: string) => void;
 }
 
@@ -22,20 +22,15 @@ const RoleTabs: React.FC<RoleTabsProps> = (props) => {
     <div className="flex w-full items-center">
       {ROLETABS.map((tab) => (
         <div
-          onClick={() => onChange("userRole", tab.value)}
-          className={
-            "flex-1 border-b-2 py-2 hover:cursor-pointer dark:border-darkmode-600" +
-            (values["userRole"] === tab.value
-              ? "border-b-2 border-blue-800"
-              : "")
-          }
+          onClick={() => onChange("vaiTro", tab.value)}
+          className="flex-1 py-2 hover:cursor-pointer"
         >
           <div
             className={
               "flex items-center justify-center gap-2 " +
-              (values["userRole"] === tab.value
-                ? "dark:text-slate-300"
-                : "text-gray-600 dark:text-slate-600")
+              (values["vaiTro"] === tab.value
+                ? "text-blue-800"
+                : "text-gray-400")
             }
           >
             <div className="text-sm font-semibold">{tab.label}</div>

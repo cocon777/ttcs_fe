@@ -77,17 +77,15 @@ const Login = () => {
     <div className="w-full pt-16">
       <form
         onSubmit={handleLogin}
-        className="mx-auto flex w-[510px] flex-col items-center space-y-4 rounded-md bg-white px-6 py-4 shadow-lg dark:bg-darkmode-600 dark:text-slate-300"
+        className="mx-auto flex w-127.5 flex-col items-center space-y-4 rounded-md bg-white px-6 py-4 shadow-lg"
       >
-        <div className="text-2xl font-bold text-gray-800 dark:text-slate-300">
-          Đăng nhập
-        </div>
+        <div className="text-2xl font-bold text-gray-800">Đăng nhập</div>
         <input
           value={values["tenDangNhap"]}
           name="tenDangNhap"
           onChange={(e) => handleChangeInput(e.target.name, e.target.value)}
           type="text"
-          className="dark: w-full rounded-md border border-slate-300 px-4 py-2.5 text-sm text-gray-800 shadow-sm"
+          className="w-full rounded-md border border-slate-300 px-4 py-2.5 text-sm text-gray-800 shadow-sm"
           placeholder="Nhập tên đăng nhập"
         />
         <div className="relative w-full">

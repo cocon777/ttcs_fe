@@ -25,7 +25,7 @@ const Register = () => {
     }
 
     if (!values.tenDangNhap.trim()) {
-      newErrors.ten = "Tên đăng nhập không được để trống";
+      newErrors.tenDangNhap = "Tên đăng nhập không được để trống";
     }
 
     if (!values.email.trim()) {
@@ -93,12 +93,6 @@ const Register = () => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleRegister();
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
       <div className="mx-auto max-w-md">
@@ -111,21 +105,20 @@ const Register = () => {
               Đăng ký tài khoản
             </h1>
           </div>
-
+          <h2 className="mb-2 text-center text-gray-700">Bạn là:</h2>
           <RoleTabs values={values} onChange={handleChangeValues} />
-
           <div className="mt-4 space-y-4">
             <div>
               <label
                 htmlFor="ten"
-                className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300"
+                className="mb-1 block text-sm font-medium text-gray-700"
               >
                 Họ tên
               </label>
               <input
                 id="ten"
                 type="text"
-                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-darkmode-400 dark:bg-darkmode-800 dark:text-slate-300 ${
+                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.ten ? "border-red-600" : "border-gray-300"
                 }`}
                 placeholder="Nhập họ tên của bạn"
@@ -134,7 +127,6 @@ const Register = () => {
                 onChange={(e) =>
                   handleChangeValues(e.target.name, e.target.value)
                 }
-                onKeyPress={handleKeyPress}
               />
               {errors.ten && (
                 <p className="mt-1 text-xs text-red-600">{errors.ten}</p>
@@ -144,14 +136,14 @@ const Register = () => {
             <div>
               <label
                 htmlFor="tenDangNhap"
-                className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300"
+                className="mb-1 block text-sm font-medium text-gray-700"
               >
                 Tên đăng nhập
               </label>
               <input
                 id="tenDangNhap"
                 type="text"
-                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-darkmode-400 dark:bg-darkmode-800 dark:text-slate-300 ${
+                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.tenDangNhap ? "border-red-600" : "border-gray-300"
                 }`}
                 placeholder="Nhập tên đăng nhập của bạn"
@@ -160,7 +152,6 @@ const Register = () => {
                 onChange={(e) =>
                   handleChangeValues(e.target.name, e.target.value)
                 }
-                onKeyPress={handleKeyPress}
               />
               {errors.tenDangNhap && (
                 <p className="mt-1 text-xs text-red-600">
@@ -172,14 +163,14 @@ const Register = () => {
             <div>
               <label
                 htmlFor="email"
-                className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300"
+                className="mb-1 block text-sm font-medium text-gray-700"
               >
                 Email
               </label>
               <input
                 id="email"
                 type="text"
-                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-darkmode-400 dark:bg-darkmode-800 dark:text-slate-300 ${
+                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.email ? "border-red-600" : "border-gray-300"
                 }`}
                 placeholder="Nhập email"
@@ -188,7 +179,6 @@ const Register = () => {
                 onChange={(e) =>
                   handleChangeValues(e.target.name, e.target.value)
                 }
-                onKeyPress={handleKeyPress}
               />
               {errors.email && (
                 <p className="mt-1 text-xs text-red-600">{errors.email}</p>
@@ -198,7 +188,7 @@ const Register = () => {
             <div>
               <label
                 htmlFor="matKhau"
-                className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300"
+                className="mb-1 block text-sm font-medium text-gray-700"
               >
                 Mật khẩu
               </label>
@@ -206,7 +196,7 @@ const Register = () => {
               <input
                 id="matKhau"
                 type="password"
-                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-darkmode-400 dark:bg-darkmode-800 dark:text-slate-300 ${
+                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.matKhau ? "border-red-600" : "border-gray-300"
                 }`}
                 placeholder="Nhập mật khẩu "
@@ -215,7 +205,6 @@ const Register = () => {
                 onChange={(e) =>
                   handleChangeValues(e.target.name, e.target.value)
                 }
-                onKeyPress={handleKeyPress}
               />
 
               {errors.matKhau && (
@@ -223,13 +212,11 @@ const Register = () => {
               )}
             </div>
           </div>
-
           {errors.general && (
             <div className="mt-4 rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
               <p className="text-sm text-red-600">{errors.general}</p>
             </div>
           )}
-
           <div className="mt-6">
             <button
               type="button"
@@ -247,7 +234,6 @@ const Register = () => {
               )}
             </button>
           </div>
-
           <div className="mt-6 text-center">
             <span className="text-sm text-gray-600 dark:text-slate-400">
               Đã có tài khoản?{" "}

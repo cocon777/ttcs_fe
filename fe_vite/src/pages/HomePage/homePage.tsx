@@ -26,7 +26,7 @@ const HomePage = () => {
       } else if (user.role === "GV") {
         navigate("/teacher/teacherHome");
       } else {
-        navigate("/student/classroom");
+        navigate("/student/studentHome");
       }
     } catch (error) {
       console.error("Error fetching user info:", error);
