@@ -46,4 +46,4 @@ public class LopHocController {
         lopHocService.xoaHocSinhKhoiLop(lopHocId, hocSinhId, currentGiaoVienId);
         return ResponseEntity.ok("Xóa học sinh thành công!");
     }
-}S
+}
