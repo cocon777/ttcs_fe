@@ -6,6 +6,30 @@ const middlewares = jsonServer.defaults();
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
 
+const nowIso = () => new Date().toISOString();
+
+const normalizeGender = (gioiTinh) => {
+  if (typeof gioiTinh === "boolean") return gioiTinh;
+  if (gioiTinh === "Nam") return true;
+  if (gioiTinh === "Nữ") return false;
+  return true;
+};
+
+const buildStudentClass = (studentClass, student) => {
+  const hocSinh = studentClass?.hocSinh ?? student ?? null;
+  const nguoiDung = hocSinh?.nguoiDung ?? {};
+
+  return {
+    ...studentClass,
+    ten: studentClass?.ten ?? nguoiDung.ten ?? "Hoc sinh",
+    email: studentClass?.email ?? nguoiDung.email ?? "",
+    soDienThoai: studentClass?.soDienThoai ?? nguoiDung.soDienThoai ?? "",
+    gioiTinh: normalizeGender(studentClass?.gioiTinh ?? nguoiDung.gioiTinh),
+    ngaySinh: studentClass?.ngaySinh ?? nguoiDung.ngaySinh ?? null,
+    hocSinh,
+  };
+};
+
 // helper
 const makeToken = (user) => `${user.tenDangNhap}-${user.id}`;
 
@@ -63,6 +87,111 @@ server.use((req, res, next) => {
       return res.status(401).json({ error: "TOKEN_MISSING" });
   }
   next();
+});
+
+// ---- CLASSROOM: danh sach HS theo lop ----
+server.get("/classrooms/:classId/students", (req, res) => {
+  const db = router.db;
+  const classId = Number(req.params.classId);
+  const classroom = db.get("classrooms").find({ id: classId }).value();
+
+  if (!classroom) {
+    return res.status(404).json({ message: "Classroom not found" });
+  }
+
+  const studentClasses = db
+    .get("student-classes")
+    .filter({ lopHocId: classId })
+    .value();
+  const students = db.get("students").value();
+  const assignments = db
+    .get("assignments")
+    .filter({ classroomId: classId })
+    .value();
+
+  const studentClassesWithProfile = studentClasses.map((studentClass) => {
+    const student =
+      studentClass.hocSinh ??
+      students.find((item) => item.id === studentClass.hocSinhId);
+    return buildStudentClass(studentClass, student);
+  });
+
+  return res.status(200).json({
+    ...classroom,
+    soLuongHS: studentClassesWithProfile.length,
+    studentClasses: studentClassesWithProfile,
+    assignments,
+  });
+});
+
+// ---- CLASSROOM: tao lop ----
+server.post("/classrooms", (req, res) => {
+  const db = router.db;
+  const { className, classYear, tenLop, namHoc, giaoVienId } = req.body || {};
+  const now = nowIso();
+  const newClassroom = {
+    id: Date.now(),
+    tenLop: className ?? tenLop ?? "Lop moi",
+    namHoc: classYear ?? namHoc ?? "",
+    giaoVienId: giaoVienId ?? 2,
+    soLuongHS: 0,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  db.get("classrooms").push(newClassroom).write();
+  return res.status(201).json(newClassroom);
+});
+
+// ---- STUDENT-CLASSES: them hoc sinh bang ma ----
+server.post("/student-classes/add-by-code", (req, res) => {
+  const db = router.db;
+  const { studentCode, classroomId } = req.body || {};
+  const classId = Number(classroomId);
+
+  if (!studentCode || !classId) {
+    return res
+      .status(400)
+      .json({ message: "Missing studentCode or classroomId" });
+  }
+
+  const student = db.get("students").find({ maHS: studentCode }).value();
+  if (!student) {
+    return res.status(404).json({ message: "Student not found" });
+  }
+
+  const existed = db
+    .get("student-classes")
+    .find({ hocSinhId: student.id, lopHocId: classId })
+    .value();
+  if (existed) {
+    return res
+      .status(409)
+      .json({ message: "Student already in classroom" });
+  }
+
+  const studentClass = buildStudentClass(
+    {
+      id: Date.now(),
+      lopHocId: classId,
+      hocSinhId: student.id,
+      createdAt: nowIso(),
+    },
+    student,
+  );
+
+  db.get("student-classes").push(studentClass).write();
+  return res.status(201).json(studentClass);
+});
+
+server.get("/student-classes/classroom/:classroomId", (req, res) => {
+  const db = router.db;
+  const classId = Number(req.params.classroomId);
+  const studentClasses = db
+    .get("student-classes")
+    .filter({ lopHocId: classId })
+    .value();
+  return res.status(200).json(studentClasses);
 });
 
 server.use(router);

@@ -3,8 +3,6 @@ import { PiExam } from "react-icons/pi";
 import { SiGoogleclassroom } from "react-icons/si";
 import { Link } from "react-router-dom";
 
-interface Props {}
-
 const TABS = [
   {
     icon: SiGoogleclassroom,
@@ -19,11 +17,11 @@ const TABS = [
   { icon: PiExam, label: "Đề", link: "/teacher/exam/management" },
 ];
 
-const TeacherHome: React.FC<Props> = (props) => {
+const TeacherHome: React.FC = () => {
   return (
     <div className="w-full text-gray-800">
       <div className="mx-auto w-4/5 pt-10">
-        <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-9 gap-9">
           {TABS.map((tab, index) => (
             <Link
               to={tab.link}
@@ -32,12 +30,10 @@ const TeacherHome: React.FC<Props> = (props) => {
             >
               <div className="p-8">
                 <tab.icon
-                  className="mx-auto size-12 text-blue-800 dark:text-blue-700"
+                  className="mx-auto size-12 text-blue-800"
                   strokeWidth={1.5}
                 />
-                <div className="mt-3 text-center font-medium dark:text-white">
-                  {tab.label}
-                </div>
+                <div className="mt-3 text-center font-medium">{tab.label}</div>
               </div>
             </Link>
           ))}

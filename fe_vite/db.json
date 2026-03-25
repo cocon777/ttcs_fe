@@ -22,5 +22,1102 @@
       "vaiTro": "HS"
     }
   ],
-  "tokens": []
+  "tokens": [],
+  "classes": [
+    {
+      "id": 1,
+      "ten_lop": "Toán cao cấp",
+      "ma_lop": "tcc",
+      "nam_hoc": "2025-2026",
+      "giao_vien_id": 2
+    },
+    {
+      "id": 2,
+      "ten_lop": "Vật lí đại cương",
+      "ma_lop": "vldc",
+      "nam_hoc": "2025-2026",
+      "giao_vien_id": 2
+    },
+    {
+      "id": 3,
+      "ten_lop": "Tín hiệu số",
+      "ma_lop": "ths",
+      "nam_hoc": "2025-2026",
+      "giao_vien_id": 2
+    }
+  ],
+  "exams": [
+    {
+      "id": "1",
+      "title": "Toan 10 - Kiem tra nhanh",
+      "durationSeconds": 2700,
+      "studentName": "Nguyen Van A",
+      "ma_lop_giao": ["vldc", "tcc"],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "text": "2 + 3 = ?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "4"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "5"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "6"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "7"
+            }
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "text": "Nghiem cua x - 4 = 0 la?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "2"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "3"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "4"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "5"
+            }
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "text": "Gia tri cua 7 x 8 la bao nhieu?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "54"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "56"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "58"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "64"
+            }
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "text": "So nao la nghiem cua phuong trinh x + 5 = 12?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "5"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "6"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "7"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "8"
+            }
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "text": "Dien tich hinh vuong canh 4 cm la ?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "8"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "12"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "16"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "20"
+            }
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "text": "Ket qua cua 45 / 9 la?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "4"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "5"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "6"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "7"
+            }
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "text": "So nao lon hon tat ca cac so con lai?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "13"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "17"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "15"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "14"
+            }
+          ]
+        },
+        {
+          "id": "q8",
+          "questionNumber": 8,
+          "text": "Gia tri cua 3^2 + 4 la?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "11"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "12"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "13"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "14"
+            }
+          ]
+        },
+        {
+          "id": "q9",
+          "questionNumber": 9,
+          "text": "Chu vi hinh chu nhat dai 6, rong 3 la?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "9"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "18"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "24"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "36"
+            }
+          ]
+        },
+        {
+          "id": "q10",
+          "questionNumber": 10,
+          "text": "So nao la so nguyen to?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "9"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "15"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "21"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "23"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "title": "Tieng Anh - Unit Test",
+      "durationSeconds": 1800,
+      "studentName": "Nguyen Van A",
+      "ma_lop_giao": ["tcc", "ths"],
+      "questions": [
+        {
+          "id": "q3",
+          "questionNumber": 1,
+          "text": "Choose the correct word: She ___ to school every day.",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "go"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "goes"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "going"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "gone"
+            }
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 2,
+          "text": "Which word is a noun?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "beautiful"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "quickly"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "student"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "write"
+            }
+          ]
+        },
+        {
+          "id": "q11",
+          "questionNumber": 3,
+          "text": "Choose the correct sentence.",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "He don't like coffee."
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "He doesn't likes coffee."
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "He doesn't like coffee."
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "He not like coffee."
+            }
+          ]
+        },
+        {
+          "id": "q12",
+          "questionNumber": 4,
+          "text": "Fill in the blank: They ___ soccer on Sundays.",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "plays"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "play"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "playing"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "is play"
+            }
+          ]
+        },
+        {
+          "id": "q13",
+          "questionNumber": 5,
+          "text": "Which word is an adjective?",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "happily"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "quick"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "run"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "teacher"
+            }
+          ]
+        },
+        {
+          "id": "q14",
+          "questionNumber": 6,
+          "text": "Choose the past tense of go.",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "goed"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "went"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "gone"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "going"
+            }
+          ]
+        },
+        {
+          "id": "q15",
+          "questionNumber": 7,
+          "text": "Choose the correct article: ___ apple a day keeps the doctor away.",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "A"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "An"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "The"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "No article"
+            }
+          ]
+        },
+        {
+          "id": "q16",
+          "questionNumber": 8,
+          "text": "Pick the synonym of begin.",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "start"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "finish"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "close"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "stop"
+            }
+          ]
+        },
+        {
+          "id": "q17",
+          "questionNumber": 9,
+          "text": "Fill in the blank: We ___ dinner at 7 PM yesterday.",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "have"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "had"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "has"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "having"
+            }
+          ]
+        },
+        {
+          "id": "q18",
+          "questionNumber": 10,
+          "text": "Choose the correct preposition: She is good ___ math.",
+          "options": [
+            {
+              "id": "a",
+              "label": "A",
+              "text": "in"
+            },
+            {
+              "id": "b",
+              "label": "B",
+              "text": "on"
+            },
+            {
+              "id": "c",
+              "label": "C",
+              "text": "at"
+            },
+            {
+              "id": "d",
+              "label": "D",
+              "text": "for"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "exam-submissions": [
+    {
+      "examId": "2",
+      "answers": {
+        "q3": "c"
+      },
+      "flaggedQuestionIds": [],
+      "id": 1
+    },
+    {
+      "examId": "2",
+      "answers": {},
+      "flaggedQuestionIds": [],
+      "id": 2
+    },
+    {
+      "examId": "1",
+      "answers": {},
+      "flaggedQuestionIds": [],
+      "id": 3
+    },
+    {
+      "examId": "2",
+      "answers": {},
+      "flaggedQuestionIds": [],
+      "id": 4
+    },
+    {
+      "examId": "1",
+      "answers": {
+        "q1": "a",
+        "q2": "b",
+        "q3": "a",
+        "q4": "a",
+        "q5": "b",
+        "q6": "a",
+        "q7": "a",
+        "q8": "a",
+        "q9": "b",
+        "q10": "b"
+      },
+      "flaggedQuestionIds": [],
+      "selectedAnswerDetails": [
+        {
+          "questionId": "q1",
+          "optionId": "a",
+          "optionLabel": "A",
+          "optionText": "4"
+        },
+        {
+          "questionId": "q2",
+          "optionId": "b",
+          "optionLabel": "B",
+          "optionText": "3"
+        },
+        {
+          "questionId": "q3",
+          "optionId": "a",
+          "optionLabel": "A",
+          "optionText": "54"
+        },
+        {
+          "questionId": "q4",
+          "optionId": "a",
+          "optionLabel": "A",
+          "optionText": "5"
+        },
+        {
+          "questionId": "q5",
+          "optionId": "b",
+          "optionLabel": "B",
+          "optionText": "12"
+        },
+        {
+          "questionId": "q6",
+          "optionId": "a",
+          "optionLabel": "A",
+          "optionText": "4"
+        },
+        {
+          "questionId": "q7",
+          "optionId": "a",
+          "optionLabel": "A",
+          "optionText": "13"
+        },
+        {
+          "questionId": "q8",
+          "optionId": "a",
+          "optionLabel": "A",
+          "optionText": "11"
+        },
+        {
+          "questionId": "q9",
+          "optionId": "b",
+          "optionLabel": "B",
+          "optionText": "18"
+        },
+        {
+          "questionId": "q10",
+          "optionId": "b",
+          "optionLabel": "B",
+          "optionText": "15"
+        }
+      ],
+      "submittedAt": "2026-03-23T13:15:57.446Z",
+      "id": 5
+    },
+    {
+      "examId": "2",
+      "answers": {
+        "q3": "a",
+        "q4": "b",
+        "q11": "a",
+        "q12": "a",
+        "q13": "d",
+        "q15": "a",
+        "q16": "b",
+        "q17": "c",
+        "q18": "d"
+      },
+      "flaggedQuestionIds": [],
+      "selectedAnswerDetails": [
+        {
+          "questionId": "q3",
+          "optionId": "a",
+          "optionLabel": "A",
+          "optionText": "go"
+        },
+        {
+          "questionId": "q4",
+          "optionId": "b",
+          "optionLabel": "B",
+          "optionText": "quickly"
+        },
+        {
+          "questionId": "q11",
+          "optionId": "a",
+          "optionLabel": "A",
+          "optionText": "He don't like coffee."
+        },
+        {
+          "questionId": "q12",
+          "optionId": "a",
+          "optionLabel": "A",
+          "optionText": "plays"
+        },
+        {
+          "questionId": "q13",
+          "optionId": "d",
+          "optionLabel": "D",
+          "optionText": "teacher"
+        },
+        {
+          "questionId": "q15",
+          "optionId": "a",
+          "optionLabel": "A",
+          "optionText": "A"
+        },
+        {
+          "questionId": "q16",
+          "optionId": "b",
+          "optionLabel": "B",
+          "optionText": "finish"
+        },
+        {
+          "questionId": "q17",
+          "optionId": "c",
+          "optionLabel": "C",
+          "optionText": "has"
+        },
+        {
+          "questionId": "q18",
+          "optionId": "d",
+          "optionLabel": "D",
+          "optionText": "for"
+        }
+      ],
+      "submittedAt": "2026-03-23T13:18:21.703Z",
+      "id": 6
+    },
+    {
+      "examId": "1",
+      "answers": {},
+      "flaggedQuestionIds": [],
+      "selectedAnswerDetails": [],
+      "submittedAt": "2026-03-23T13:21:30.107Z",
+      "id": 7
+    },
+    {
+      "examId": "1",
+      "answers": {
+        "q1": "b",
+        "q2": "d",
+        "q3": "d",
+        "q4": "d",
+        "q5": "d",
+        "q6": "d",
+        "q7": "d",
+        "q8": "d",
+        "q9": "d"
+      },
+      "flaggedQuestionIds": [],
+      "selectedAnswerDetails": [
+        {
+          "questionId": "q1",
+          "optionId": "b",
+          "optionLabel": "B",
+          "optionText": "5"
+        },
+        {
+          "questionId": "q2",
+          "optionId": "d",
+          "optionLabel": "D",
+          "optionText": "5"
+        },
+        {
+          "questionId": "q3",
+          "optionId": "d",
+          "optionLabel": "D",
+          "optionText": "64"
+        },
+        {
+          "questionId": "q4",
+          "optionId": "d",
+          "optionLabel": "D",
+          "optionText": "8"
+        },
+        {
+          "questionId": "q5",
+          "optionId": "d",
+          "optionLabel": "D",
+          "optionText": "20"
+        },
+        {
+          "questionId": "q6",
+          "optionId": "d",
+          "optionLabel": "D",
+          "optionText": "7"
+        },
+        {
+          "questionId": "q7",
+          "optionId": "d",
+          "optionLabel": "D",
+          "optionText": "14"
+        },
+        {
+          "questionId": "q8",
+          "optionId": "d",
+          "optionLabel": "D",
+          "optionText": "14"
+        },
+        {
+          "questionId": "q9",
+          "optionId": "d",
+          "optionLabel": "D",
+          "optionText": "36"
+        }
+      ],
+      "submittedAt": "2026-03-23T13:24:38.484Z",
+      "id": 8
+    },
+    {
+      "examId": "1",
+      "answers": {
+        "q1": "a",
+        "q2": "b",
+        "q3": "a",
+        "q4": "b",
+        "q5": "a",
+        "q6": "d",
+        "q7": "a"
+      },
+      "flaggedQuestionIds": [],
+      "id": 9
+    }
+  ],
+  "classrooms": [
+    {
+      "id": 1,
+      "tenLop": "Toán cao cấp",
+      "namHoc": "2025-2026",
+      "giaoVienId": 2,
+      "soLuongHS": 2,
+      "createdAt": "2026-03-20T08:00:00.000Z",
+      "updatedAt": "2026-03-20T08:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "tenLop": "Vật lí đại cương",
+      "namHoc": "2025-2026",
+      "giaoVienId": 2,
+      "soLuongHS": 2,
+      "createdAt": "2026-03-20T08:05:00.000Z",
+      "updatedAt": "2026-03-20T08:05:00.000Z"
+    },
+    {
+      "id": 3,
+      "tenLop": "Tín hiệu số",
+      "namHoc": "2025-2026",
+      "giaoVienId": 2,
+      "soLuongHS": 1,
+      "createdAt": "2026-03-20T08:10:00.000Z",
+      "updatedAt": "2026-03-20T08:10:00.000Z"
+    }
+  ],
+  "students": [
+    {
+      "id": 101,
+      "maHS": "HS001",
+      "createdAt": "2026-03-20T08:30:00.000Z",
+      "nguoiDung": {
+        "id": 1001,
+        "ten": "Nguyễn Văn A",
+        "email": "hs001@student.test",
+        "ngaySinh": "2007-05-10",
+        "soDienThoai": "0900000001",
+        "anhDaiDien": "",
+        "vaiTro": "HS",
+        "gioiTinh": "Nam"
+      }
+    },
+    {
+      "id": 102,
+      "maHS": "HS002",
+      "createdAt": "2026-03-20T08:31:00.000Z",
+      "nguoiDung": {
+        "id": 1002,
+        "ten": "Trần Thị B",
+        "email": "hs002@student.test",
+        "ngaySinh": "2007-09-12",
+        "soDienThoai": "0900000002",
+        "anhDaiDien": "",
+        "vaiTro": "HS",
+        "gioiTinh": "Nữ"
+      }
+    },
+    {
+      "id": 103,
+      "maHS": "HS003",
+      "createdAt": "2026-03-20T08:32:00.000Z",
+      "nguoiDung": {
+        "id": 1003,
+        "ten": "Lê Văn C",
+        "email": "hs003@student.test",
+        "ngaySinh": "2007-01-25",
+        "soDienThoai": "0900000003",
+        "anhDaiDien": "",
+        "vaiTro": "HS",
+        "gioiTinh": "Nam"
+      }
+    },
+    {
+      "id": 104,
+      "maHS": "HS004",
+      "createdAt": "2026-03-20T08:33:00.000Z",
+      "nguoiDung": {
+        "id": 1004,
+        "ten": "Phạm Thị D",
+        "email": "hs004@student.test",
+        "ngaySinh": "2007-11-03",
+        "soDienThoai": "0900000004",
+        "anhDaiDien": "",
+        "vaiTro": "HS",
+        "gioiTinh": "Nữ"
+      }
+    },
+    {
+      "id": 105,
+      "maHS": "HS005",
+      "createdAt": "2026-03-20T08:34:00.000Z",
+      "nguoiDung": {
+        "id": 1005,
+        "ten": "Hoàng Văn E",
+        "email": "hs005@student.test",
+        "ngaySinh": "2007-03-18",
+        "soDienThoai": "0900000005",
+        "anhDaiDien": "",
+        "vaiTro": "HS",
+        "gioiTinh": "Nam"
+      }
+    }
+  ],
+  "student-classes": [
+    {
+      "id": 1,
+      "ten": "Nguyễn Văn A",
+      "email": "hs001@student.test",
+      "soDienThoai": "0900000001",
+      "gioiTinh": true,
+      "ngaySinh": "2007-05-10",
+      "lopHocId": 1,
+      "hocSinhId": 101,
+      "hocSinh": {
+        "id": 101,
+        "maHS": "HS001",
+        "createdAt": "2026-03-20T08:30:00.000Z",
+        "nguoiDung": {
+          "id": 1001,
+          "ten": "Nguyễn Văn A",
+          "email": "hs001@student.test",
+          "ngaySinh": "2007-05-10",
+          "soDienThoai": "0900000001",
+          "anhDaiDien": "",
+          "vaiTro": "HS",
+          "gioiTinh": "Nam"
+        }
+      },
+      "createdAt": "2026-03-20T09:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "ten": "Trần Thị B",
+      "email": "hs002@student.test",
+      "soDienThoai": "0900000002",
+      "gioiTinh": false,
+      "ngaySinh": "2007-09-12",
+      "lopHocId": 1,
+      "hocSinhId": 102,
+      "hocSinh": {
+        "id": 102,
+        "maHS": "HS002",
+        "createdAt": "2026-03-20T08:31:00.000Z",
+        "nguoiDung": {
+          "id": 1002,
+          "ten": "Trần Thị B",
+          "email": "hs002@student.test",
+          "ngaySinh": "2007-09-12",
+          "soDienThoai": "0900000002",
+          "anhDaiDien": "",
+          "vaiTro": "HS",
+          "gioiTinh": "Nữ"
+        }
+      },
+      "createdAt": "2026-03-20T09:02:00.000Z"
+    },
+    {
+      "id": 3,
+      "ten": "Lê Văn C",
+      "email": "hs003@student.test",
+      "soDienThoai": "0900000003",
+      "gioiTinh": true,
+      "ngaySinh": "2007-01-25",
+      "lopHocId": 2,
+      "hocSinhId": 103,
+      "hocSinh": {
+        "id": 103,
+        "maHS": "HS003",
+        "createdAt": "2026-03-20T08:32:00.000Z",
+        "nguoiDung": {
+          "id": 1003,
+          "ten": "Lê Văn C",
+          "email": "hs003@student.test",
+          "ngaySinh": "2007-01-25",
+          "soDienThoai": "0900000003",
+          "anhDaiDien": "",
+          "vaiTro": "HS",
+          "gioiTinh": "Nam"
+        }
+      },
+      "createdAt": "2026-03-20T09:05:00.000Z"
+    },
+    {
+      "id": 4,
+      "ten": "Phạm Thị D",
+      "email": "hs004@student.test",
+      "soDienThoai": "0900000004",
+      "gioiTinh": false,
+      "ngaySinh": "2007-11-03",
+      "lopHocId": 2,
+      "hocSinhId": 104,
+      "hocSinh": {
+        "id": 104,
+        "maHS": "HS004",
+        "createdAt": "2026-03-20T08:33:00.000Z",
+        "nguoiDung": {
+          "id": 1004,
+          "ten": "Phạm Thị D",
+          "email": "hs004@student.test",
+          "ngaySinh": "2007-11-03",
+          "soDienThoai": "0900000004",
+          "anhDaiDien": "",
+          "vaiTro": "HS",
+          "gioiTinh": "Nữ"
+        }
+      },
+      "createdAt": "2026-03-20T09:06:00.000Z"
+    },
+    {
+      "id": 5,
+      "ten": "Hoàng Văn E",
+      "email": "hs005@student.test",
+      "soDienThoai": "0900000005",
+      "gioiTinh": true,
+      "ngaySinh": "2007-03-18",
+      "lopHocId": 3,
+      "hocSinhId": 105,
+      "hocSinh": {
+        "id": 105,
+        "maHS": "HS005",
+        "createdAt": "2026-03-20T08:34:00.000Z",
+        "nguoiDung": {
+          "id": 1005,
+          "ten": "Hoàng Văn E",
+          "email": "hs005@student.test",
+          "ngaySinh": "2007-03-18",
+          "soDienThoai": "0900000005",
+          "anhDaiDien": "",
+          "vaiTro": "HS",
+          "gioiTinh": "Nam"
+        }
+      },
+      "createdAt": "2026-03-20T09:10:00.000Z"
+    }
+  ]
 }
