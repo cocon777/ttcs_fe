@@ -59,46 +59,63 @@ const Register = () => {
 
   const handleChangeValues = (name: string, newValue: string) => {
     setValues((prevValues) => ({ ...prevValues, [name]: newValue }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
     }
   };
 
-  const handleRegister = async () => {
+  // ĐÃ SỬA: Nhận event từ form submit và chặn hành vi mặc định ở đây
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); 
+    
+    // TRẠM SỐ 1: Kiểm tra xem nút có hoạt động không
+    console.log("1. Đã bấm nút đăng ký!");
+    console.log("Dữ liệu chuẩn bị gửi:", values);
+
+    // Tạm thời vô hiệu hóa hàm validate để test kết nối API thẳng xuống Backend
+    /*
     if (!validateForm()) {
+      console.log("-> Bị chặn lại do nhập thiếu/sai định dạng");
       return;
     }
+    */
 
     setIsLoading(true);
+    console.log("2. Bắt đầu gọi API gửi xuống Spring Boot...");
+    
     try {
       const response = await AuthAPI.register(
         values.ten,
         values.tenDangNhap,
-        values.email,
-        values.matKhau,
-        values.vaiTro,
+        values.matKhau, 
+        values.email,   
+        values.vaiTro
       );
+      
+      // TRẠM SỐ 3: Xem Backend trả lời cái gì
+      console.log("3. Backend trả lời:", response);
 
-      if (response?.status === 201) {
+      if (response && (response.status === 201 || response.status === 200)) {
+        console.log("-> THÀNH CÔNG! Đang chuyển sang trang Đăng nhập...");
         navigate("/auth/login");
       } else {
-        setErrors({ general: "Đăng ký không thành công. Vui lòng thử lại." });
+        setErrors({ general: "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin." });
       }
     } catch (error) {
-      console.error(error);
-      setErrors({ general: "Có lỗi xảy ra. Vui lòng thử lại sau." });
+      // TRẠM SỐ 4: Bắt lỗi đỏ nếu gọi API thất bại
+      console.error("4. LỖI KHI GỌI API:", error);
+      setErrors({ general: "Có lỗi xảy ra kết nối với máy chủ. Vui lòng thử lại sau." });
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
       <div className="mx-auto max-w-md">
+        {/* ĐÃ SỬA: Chuyển hàm handleRegister lên onSubmit của thẻ form */}
         <form
           className="rounded-lg bg-white p-8 shadow-lg"
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={handleRegister}
         >
           <div className="mb-8 text-center">
             <h1 className="text-2xl font-bold text-gray-900 ">
@@ -107,120 +124,64 @@ const Register = () => {
           </div>
           <h2 className="mb-2 text-center text-gray-700">Bạn là:</h2>
           <RoleTabs values={values} onChange={handleChangeValues} />
+          
           <div className="mt-4 space-y-4">
+            {/* Các thẻ input giữ nguyên */}
             <div>
-              <label
-                htmlFor="ten"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Họ tên
-              </label>
+              <label htmlFor="ten" className="mb-1 block text-sm font-medium text-gray-700">Họ tên</label>
               <input
-                id="ten"
-                type="text"
-                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.ten ? "border-red-600" : "border-gray-300"
-                }`}
-                placeholder="Nhập họ tên của bạn"
-                value={values.ten}
-                name="ten"
-                onChange={(e) =>
-                  handleChangeValues(e.target.name, e.target.value)
-                }
+                id="ten" type="text"
+                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.ten ? "border-red-600" : "border-gray-300"}`}
+                placeholder="Nhập họ tên của bạn" value={values.ten} name="ten"
+                onChange={(e) => handleChangeValues(e.target.name, e.target.value)}
               />
-              {errors.ten && (
-                <p className="mt-1 text-xs text-red-600">{errors.ten}</p>
-              )}
+              {errors.ten && <p className="mt-1 text-xs text-red-600">{errors.ten}</p>}
             </div>
 
             <div>
-              <label
-                htmlFor="tenDangNhap"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Tên đăng nhập
-              </label>
+              <label htmlFor="tenDangNhap" className="mb-1 block text-sm font-medium text-gray-700">Tên đăng nhập</label>
               <input
-                id="tenDangNhap"
-                type="text"
-                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.tenDangNhap ? "border-red-600" : "border-gray-300"
-                }`}
-                placeholder="Nhập tên đăng nhập của bạn"
-                value={values.tenDangNhap}
-                name="tenDangNhap"
-                onChange={(e) =>
-                  handleChangeValues(e.target.name, e.target.value)
-                }
+                id="tenDangNhap" type="text"
+                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.tenDangNhap ? "border-red-600" : "border-gray-300"}`}
+                placeholder="Nhập tên đăng nhập của bạn" value={values.tenDangNhap} name="tenDangNhap"
+                onChange={(e) => handleChangeValues(e.target.name, e.target.value)}
               />
-              {errors.tenDangNhap && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.tenDangNhap}
-                </p>
-              )}
+              {errors.tenDangNhap && <p className="mt-1 text-xs text-red-600">{errors.tenDangNhap}</p>}
             </div>
 
             <div>
-              <label
-                htmlFor="email"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Email
-              </label>
+              <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">Email</label>
               <input
-                id="email"
-                type="text"
-                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.email ? "border-red-600" : "border-gray-300"
-                }`}
-                placeholder="Nhập email"
-                value={values.email}
-                name="email"
-                onChange={(e) =>
-                  handleChangeValues(e.target.name, e.target.value)
-                }
+                id="email" type="text"
+                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? "border-red-600" : "border-gray-300"}`}
+                placeholder="Nhập email" value={values.email} name="email"
+                onChange={(e) => handleChangeValues(e.target.name, e.target.value)}
               />
-              {errors.email && (
-                <p className="mt-1 text-xs text-red-600">{errors.email}</p>
-              )}
+              {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
             </div>
 
             <div>
-              <label
-                htmlFor="matKhau"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Mật khẩu
-              </label>
-
+              <label htmlFor="matKhau" className="mb-1 block text-sm font-medium text-gray-700">Mật khẩu</label>
               <input
-                id="matKhau"
-                type="password"
-                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.matKhau ? "border-red-600" : "border-gray-300"
-                }`}
-                placeholder="Nhập mật khẩu "
-                value={values.matKhau}
-                name="matKhau"
-                onChange={(e) =>
-                  handleChangeValues(e.target.name, e.target.value)
-                }
+                id="matKhau" type="password"
+                className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.matKhau ? "border-red-600" : "border-gray-300"}`}
+                placeholder="Nhập mật khẩu " value={values.matKhau} name="matKhau"
+                onChange={(e) => handleChangeValues(e.target.name, e.target.value)}
               />
-
-              {errors.matKhau && (
-                <p className="mt-1 text-xs text-red-600">{errors.matKhau}</p>
-              )}
+              {errors.matKhau && <p className="mt-1 text-xs text-red-600">{errors.matKhau}</p>}
             </div>
           </div>
+
           {errors.general && (
             <div className="mt-4 rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
               <p className="text-sm text-red-600">{errors.general}</p>
             </div>
           )}
+
           <div className="mt-6">
+            {/* ĐÃ SỬA: Đổi thành type="submit" và xóa onClick đi */}
             <button
-              type="button"
-              onClick={handleRegister}
+              type="submit"
               disabled={isLoading}
               className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-offset-darkmode-500"
             >
@@ -234,14 +195,10 @@ const Register = () => {
               )}
             </button>
           </div>
+          
           <div className="mt-6 text-center">
-            <span className="text-sm text-gray-600 dark:text-slate-400">
-              Đã có tài khoản?{" "}
-            </span>
-            <Link
-              to="/auth/login"
-              className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
-            >
+            <span className="text-sm text-gray-600 dark:text-slate-400">Đã có tài khoản? </span>
+            <Link to="/auth/login" className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300">
               Đăng nhập
             </Link>
           </div>

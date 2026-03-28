@@ -1,5 +1,5 @@
 import { type AxiosResponse } from "axios";
-import { axiosInstance } from "../../services/axiosInstance";
+import  axiosInstance  from "../../services/axiosInstance";
 
 const UserAPI = {
   getInfo: async (): Promise<AxiosResponse | null> => {
