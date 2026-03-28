@@ -2,6 +2,6 @@ package com.example.ttcs.enums;
 
 public enum VaiTro {
     ADMIN,
-    GV,
-    HS
+    GIAO_VIEN,
+    HOC_SINH
 }
