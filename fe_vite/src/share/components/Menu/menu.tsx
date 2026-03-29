@@ -9,7 +9,6 @@ import type { NguoiDung } from "../../interfaces/user.interface";
 const Menu = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<NguoiDung>({} as NguoiDung);
-  const [isLoading, setIsLoading] = useState(false);
 
   const fetchUserInfo = useCallback(async () => {
     try {
@@ -26,21 +25,9 @@ const Menu = () => {
     fetchUserInfo();
   }, [fetchUserInfo]);
 
-  const handleLogout = useCallback(async () => {
-    try {
-      setIsLoading(true);
-
-      const response = await AuthAPI.logout();
-
-      if (response?.status === 204) {
-        localStorage.removeItem("accessToken");
-        navigate("/auth/login", { replace: true });
-      }
-    } catch (error) {
-      console.error("Logout error:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleLogout = useCallback(() => {
+    AuthAPI.logout();
+    navigate("/auth/login", { replace: true });
   }, [navigate]);
 
   return (
@@ -54,10 +41,7 @@ const Menu = () => {
       <button
         type="button"
         onClick={handleLogout}
-        disabled={isLoading}
-        className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-darkmode-400 ${
-          isLoading ? "cursor-not-allowed opacity-50" : ""
-        }`}
+        className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-darkmode-400"
       >
         <LogOut strokeWidth={1.5} className="size-4" />
         Đăng xuất

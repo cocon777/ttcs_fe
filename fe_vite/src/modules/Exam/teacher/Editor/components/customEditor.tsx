@@ -126,8 +126,8 @@ const CustomEditor = forwardRef<CustomEditorHandle, CustomEditorProps>(
       <MonacoEditor
         height="560"
         options={{
-          ...options, // Giữ các options cũ từ file config của bạn
-          theme: "custom-theme", // Ép sử dụng theme bạn vừa định nghĩa
+          ...options, // Giữ các options cũ từ file config
+          theme: "custom-theme", // Ép sử dụng theme  vừa định nghĩa
         }}
         language="custom-editor"
         value={value}

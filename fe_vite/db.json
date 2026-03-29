@@ -52,7 +52,10 @@
       "title": "Toan 10 - Kiem tra nhanh",
       "durationSeconds": 2700,
       "studentName": "Nguyen Van A",
-      "ma_lop_giao": ["vldc", "tcc"],
+      "ma_lop_giao": [
+        "vldc",
+        "tcc"
+      ],
       "questions": [
         {
           "id": "q1",
@@ -331,7 +334,10 @@
       "title": "Tieng Anh - Unit Test",
       "durationSeconds": 1800,
       "studentName": "Nguyen Van A",
-      "ma_lop_giao": ["tcc", "ths"],
+      "ma_lop_giao": [
+        "tcc",
+        "ths"
+      ],
       "questions": [
         {
           "id": "q3",
@@ -880,6 +886,29 @@
       },
       "flaggedQuestionIds": [],
       "id": 9
+    },
+    {
+      "examId": "1",
+      "answers": {
+        "q1": "a",
+        "q2": "b",
+        "q3": "a",
+        "q4": "d",
+        "q5": "c",
+        "q6": "b",
+        "q7": "a",
+        "q8": "b",
+        "q9": "a",
+        "q10": "b"
+      },
+      "flaggedQuestionIds": [],
+      "id": 10
+    },
+    {
+      "examId": "1",
+      "answers": {},
+      "flaggedQuestionIds": [],
+      "id": 11
     }
   ],
   "classrooms": [

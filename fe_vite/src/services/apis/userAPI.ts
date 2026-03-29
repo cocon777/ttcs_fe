@@ -1,5 +1,5 @@
 import { type AxiosResponse } from "axios";
-import { axiosInstance } from "../../services/axiosInstance";
+import axiosInstance from "../../services/axiosInstance";
 
 const UserAPI = {
   getInfo: async (): Promise<AxiosResponse | null> => {
@@ -11,7 +11,7 @@ const UserAPI = {
     }
 
     try {
-      const response = await axiosInstance.get("users");
+      const response = await axiosInstance.get("users/me");
 
       return response;
     } catch (error) {

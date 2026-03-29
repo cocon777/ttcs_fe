@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-
 import { Link, useNavigate } from "react-router-dom";
 import UserAPI from "../../../services/apis/userAPI";
 import AuthAPI from "../../../services/apis/authAPI";
+
 interface LoginInfo {
   tenDangNhap: string;
   matKhau: string;
@@ -33,24 +33,32 @@ const Login = () => {
       return;
     }
 
-    const response = await AuthAPI.login(tenDangNhap, matKhau);
+    try {
+      const response = await AuthAPI.login(tenDangNhap, matKhau);
 
-    if (response?.status === 200) {
-      const loginData = response.data;
+      if (response && response.status === 200) {
+        const loginData = response.data;
+        const token = loginData.accessToken;
 
-      if (loginData.accessToken) {
-        localStorage.setItem("accessToken", loginData.accessToken);
-        const vaiTro = loginData.user.vaiTro;
+        if (token) {
+          localStorage.setItem("accessToken", token);
 
-        if (vaiTro === "ADMIN") {
-          navigate("/admin");
-        } else if (vaiTro === "GV") {
-          navigate("/teacher");
-        } else {
-          navigate("/student");
+          const vaiTro = loginData?.user?.vaiTro;
+          console.log("VAI TRO HIEN TAI:", vaiTro);
+
+          if (vaiTro === "ADMIN") {
+            navigate("/admin");
+          } else if (vaiTro === "GV") {
+            navigate("/teacher");
+          } else if (vaiTro === "HS") {
+            navigate("/student");
+          } else {
+            navigate("/");
+          }
         }
       }
-    } else {
+    } catch (error) {
+      console.error("Lỗi đăng nhập:", error);
       setMessage("Tài khoản hoặc mật khẩu không chính xác");
     }
   };
@@ -71,7 +79,7 @@ const Login = () => {
     };
 
     fetchUserInfo();
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="w-full pt-16">
@@ -80,47 +88,51 @@ const Login = () => {
         className="mx-auto flex w-127.5 flex-col items-center space-y-4 rounded-md bg-white px-6 py-4 shadow-lg"
       >
         <div className="text-2xl font-bold text-gray-800">Đăng nhập</div>
+
         <input
-          value={values["tenDangNhap"]}
+          value={values.tenDangNhap}
           name="tenDangNhap"
           onChange={(e) => handleChangeInput(e.target.name, e.target.value)}
           type="text"
           className="w-full rounded-md border border-slate-300 px-4 py-2.5 text-sm text-gray-800 shadow-sm"
           placeholder="Nhập tên đăng nhập"
         />
+
         <div className="relative w-full">
           <input
-            value={values["matKhau"]}
+            value={values.matKhau}
             name="matKhau"
             onChange={(e) => handleChangeInput(e.target.name, e.target.value)}
             type={isShowPassword ? "text" : "password"}
             className="w-full rounded-md border border-slate-300 px-4 py-2.5 text-sm text-gray-800 shadow-sm"
             placeholder="Mật khẩu"
           />
-          <EyeOff
-            className={`absolute right-2 top-2 text-gray-600 ${isShowPassword ? "hidden" : ""}`}
-            strokeWidth={1.5}
+          <button
+            type="button"
+            className="absolute right-2 top-2 text-gray-500"
             onClick={() => setIsShowPassword(!isShowPassword)}
-          />
-          <Eye
-            className={`absolute right-2 top-2 text-gray-600 ${isShowPassword ? "" : "hidden"}`}
-            strokeWidth={1.5}
-            onClick={() => setIsShowPassword(!isShowPassword)}
-          />
-          <div className="mt-1 text-xs text-red-500">{message}</div>
+          >
+            {isShowPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+          </button>
         </div>
+
+        {message && (
+          <div className="w-full text-left text-xs text-red-500">{message}</div>
+        )}
+
         <button
           type="submit"
           className="w-full rounded-md bg-blue-800 py-3 text-center hover:cursor-pointer hover:bg-blue-700"
-          onClick={(e) =>
-            handleLogin(e as unknown as React.FormEvent<HTMLFormElement>)
-          }
         >
           <div className="text-sm font-semibold text-white">Đăng nhập</div>
         </button>
-        <div className="flex items-center text-sm text-blue-800 dark:text-blue-600">
+
+        <div className="flex items-center gap-1 text-sm">
           <div className="text-slate-400">Bạn chưa có tài khoản?</div>
-          <Link to={"/auth/register"} className="">
+          <Link
+            to="/auth/register"
+            className="font-semibold text-blue-600 hover:underline"
+          >
             Tạo một tài khoản mới
           </Link>
         </div>

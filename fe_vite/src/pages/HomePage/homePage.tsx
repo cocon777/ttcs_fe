@@ -21,9 +21,9 @@ const HomePage = () => {
 
       const user = response.data;
 
-      if (user.role === "ADMIN") {
+      if (user.vaiTro === "ADMIN") {
         navigate("/admin");
-      } else if (user.role === "GV") {
+      } else if (user.vaiTro === "GV") {
         navigate("/teacher/teacherhome");
       } else {
         navigate("/student/studenthome");

@@ -1,6 +1,6 @@
 import type { AxiosResponse } from "axios";
 import type { NewStudentClass } from "../../modules/Class/teacher/ClassDetail/interface/interface";
-import { axiosInstance } from "../../services/axiosInstance";
+import axiosInstance from "../../services/axiosInstance";
 
 const accessToken = localStorage.getItem("accessToken");
 const STUDENT_CLASS_API_URL = `student-classes`;

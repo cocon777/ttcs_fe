@@ -16,7 +16,6 @@ const ExamRoutes = {
       element: <EditorLayout />,
       children: [
         { path: "", element: <Editor /> },
-        // { path: "create", element: <CreateExam /> },
       ],
     },
   ],
