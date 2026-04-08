@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import classAPI from "../../../../services/apis/classAPI";
+import { classAPI } from "../../../../services/apis/classAPI";
 import examAPI from "../../../../services/apis/examAPI";
 import type { StudentClass } from "../../../../services/apis/classAPI";
 import type { ExamListItem } from "../../../../services/apis/examAPI";
@@ -27,7 +27,7 @@ const ClassExamListPage = () => {
         examAPI.getExamListByClass(classId),
       ]);
 
-      setClassItem(classData);
+      setClassItem(classData.data);
       setExamList(allExams);
       setLoading(false);
     };

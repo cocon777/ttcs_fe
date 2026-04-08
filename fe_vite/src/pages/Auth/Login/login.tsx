@@ -41,7 +41,13 @@ const Login = () => {
         const token = loginData.accessToken;
 
         if (token) {
+          // 1. Lưu Token
           localStorage.setItem("accessToken", token);
+
+          // 2. 🚀 LƯU THÔNG TIN USER (Gồm ID, vaiTro, tenDangNhap) VÀO MÁY
+          if (loginData.user) {
+            localStorage.setItem("user", JSON.stringify(loginData.user));
+          }
 
           const vaiTro = loginData?.user?.vaiTro;
           console.log("VAI TRO HIEN TAI:", vaiTro);

@@ -1,16 +1,18 @@
-// import Logo from "/icons.svg";
 import { LuHouse } from "react-icons/lu";
 import { LiaSchoolSolid } from "react-icons/lia";
 import { PiExam } from "react-icons/pi";
 import { SiGoogleclassroom } from "react-icons/si";
-import { Link } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+// 1. Tôi đã thêm icon mới chuyên dùng cho "Tạo bài" ở đây
+import { MdOutlinePostAdd } from "react-icons/md"; 
+import { Link, NavLink } from "react-router-dom";
 
 const TABS = [
   { icon: LuHouse, link: "/teacher" },
   { icon: SiGoogleclassroom, link: "/teacher/class/management" },
-  { icon: LiaSchoolSolid, link: "/teacher/lesson/management" },
-  { icon: PiExam, link: "/teacher/exam/management" },
+  { icon: LiaSchoolSolid, link: "/teacher/class/management" },
+  { icon: PiExam, link: "/teacher/class/management" },
+  // 2. Thêm một nút mới tinh vào danh sách Menu
+  { icon: MdOutlinePostAdd, link: "/teacher/class/tao-bai-giang" },
 ];
 
 const TeacherSideBar = () => {

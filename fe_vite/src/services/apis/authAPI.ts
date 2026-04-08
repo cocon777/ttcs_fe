@@ -11,7 +11,6 @@ const AuthAPI = {
   ) => {
     try {
       const requestData = { tenDangNhap, email, matKhau, ten, vaiTro };
-      // header tự chèn bằng axiosInstance
       const response = await axiosInstance.post("auth/signup", requestData);
       return response;
     } catch (error) {
@@ -26,6 +25,27 @@ const AuthAPI = {
     try {
       const requestData = { tenDangNhap, matKhau };
       const response = await axiosInstance.post("auth/login", requestData);
+
+      // 🚀 BẮT ĐẦU LƯU VÀO MÁY TẠI ĐÂY
+      if (response && response.data) {
+        const data = response.data; // Dữ liệu Java trả về
+
+        // 1. Lưu Chìa khóa (Token)
+        const token = data.accessToken || data.token; 
+        if (token) {
+          localStorage.setItem("accessToken", token);
+        }
+
+        // 2. Lưu thông tin User (Cực kỳ quan trọng để lấy ID)
+        // Lưu ý: Tên biến data.id, data.username... phải khớp với những gì Java trả về
+        const userInfo = {
+          id: data.id, 
+          username: data.tenDangNhap || data.username,
+          role: data.roles || data.vaiTro
+        };
+        localStorage.setItem("user", JSON.stringify(userInfo));
+      }
+
       return response;
     } catch (error) {
       console.log("Error in login of AuthAPI: ", error);
@@ -34,7 +54,9 @@ const AuthAPI = {
   },
 
   logout: async (): Promise<void> => {
+    // 🚀 Dọn sạch sẽ cả Token và User khi Đăng xuất
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("user"); 
   },
 };
 

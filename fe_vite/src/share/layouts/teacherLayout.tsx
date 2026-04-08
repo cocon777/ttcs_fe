@@ -1,4 +1,5 @@
-import { Outlet } from "react-router";
+// 🚀 ĐÃ SỬA: Thêm chữ -dom vào sau react-router
+import { Outlet } from "react-router-dom"; 
 import TeacherSideBar from "../components/Sidebar/TeacherSideBar";
 import TopBar from "../components/TopBar/topbar";
 
