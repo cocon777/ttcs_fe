@@ -12,7 +12,7 @@ const ExamRow: React.FC<DeHang> = (props) => {
   const { tieuDe, daXuatBan } = de;
 
   const handleRowClick = () => {
-    navigate(`/teacher/exam/exam-results-list/${de.id}`);
+    navigate(`/teacher/exam/exam-infor/${de.id}`);
   };
 
   return (

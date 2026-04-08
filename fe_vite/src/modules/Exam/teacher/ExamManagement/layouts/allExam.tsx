@@ -18,7 +18,7 @@ const AllExams: React.FC<AllExamsProps> = (props) => {
           <thead className="border-b border-gray-200">
             <tr className="text-gray-800 dark:text-gray-300">
               <td scope="col" className="px-6 py-4 font-semibold">
-                Tên
+                Tiêu đề
               </td>
               <td scope="col" className="px-6 py-4 font-semibold">
                 Trạng thái
