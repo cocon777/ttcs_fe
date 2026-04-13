@@ -1,10 +1,10 @@
 import { type AxiosResponse } from "axios";
 import axiosInstance from "../../services/axiosInstance";
 
-const accessToken = localStorage.getItem("accessToken");
-
 export const ClassroomAPI = {
   getStudents: async (classId: string | number): Promise<AxiosResponse> => {
+    // Lấy token NGAY TRONG HÀM để đảm bảo luôn là bản mới nhất
+    const accessToken = localStorage.getItem("accessToken");
     try {
       const response = await axiosInstance.get(
         `classrooms/${classId}/students`,
@@ -15,21 +15,35 @@ export const ClassroomAPI = {
           },
         },
       );
-
-      console.log("Add class api response: ", response);
       return response;
     } catch (error) {
       throw error;
     }
   },
 
-  create: async (className: string, classYear: string) => {
+  create: async (
+    className: string,
+    classYear: string,
+    khoiLopId: number,
+    monHocId: number,
+  ) => {
+    // 1. Lấy Token
+    const accessToken = localStorage.getItem("accessToken");
+
+    // 2. Lấy ID của giáo viên đang đăng nhập
+    const userString = localStorage.getItem("user");
+    const user = userString ? JSON.parse(userString) : null;
+    const teacherId = user?.id;
+
     try {
       const response = await axiosInstance.post(
-        "classrooms",
+        "api/lop-hoc/tao-moi",
         {
-          className,
-          classYear,
+          tenLop: className,
+          namHoc: classYear,
+          khoiLopId: khoiLopId,
+          monHocId: monHocId,
+          giaoVienId: teacherId, // Gửi kèm ID để tạo lớp đúng chủ nhân
         },
         {
           headers: {
@@ -38,12 +52,9 @@ export const ClassroomAPI = {
           },
         },
       );
-
-      console.log("Add class api response: ", response);
       return response;
     } catch (error) {
-      console.log("Error in ClassroomAPI: ", error);
-      return {};
+      throw error;
     }
   },
 };

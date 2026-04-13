@@ -1,50 +1,51 @@
-import axiosInstance from "../../services/axiosInstance";
+import axiosInstance from "../axiosInstance"; 
 
 export interface StudentClass {
-  id: string;
-  name: string;
+  id: number;
+  tenLop: string;
   maLop: string;
-  namHoc: string | null;
-  giaoVienId: number;
+  namHoc: string;
+  khoiLop?: { id: number; ten: string };
+  monHoc?: { id: number; ten: string };
+  giaoVien?: { id: number; hoTen: string };
 }
 
-interface RawClassItem {
-  id?: number | string;
-  ten_lop?: string;
-  ma_lop?: string;
-  nam_hoc?: string | null;
-  giao_vien_id?: number;
-}
+export const classAPI = {
+  // Lấy danh sách lớp của giáo viên
+  getAllByTeacher: async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    const userString = localStorage.getItem("user");
+    const user = userString ? JSON.parse(userString) : null;
+    const teacherId = user?.id;
 
-const normalizeClass = (raw: RawClassItem): StudentClass => ({
-  id: String(raw.ma_lop ?? raw.id ?? ""),
-  name: raw.ten_lop ?? "Lop hoc",
-  maLop: String(raw.ma_lop ?? raw.id ?? ""),
-  namHoc: raw.nam_hoc ?? null,
-  giaoVienId: Number(raw.giao_vien_id ?? 0),
-});
-
-const classAPI = {
-  getClassList: async (): Promise<StudentClass[]> => {
-    try {
-      const response = await axiosInstance.get("/classes");
-      const data = response.data as RawClassItem[];
-      return data.map(normalizeClass);
-    } catch (error) {
-      console.error("Error in getClassList:", error);
-      return [];
-    }
+    return await axiosInstance.get(`api/lop-hoc/giao-vien/${teacherId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
   },
 
-  getClassById: async (classId: string): Promise<StudentClass | null> => {
+  getClassById: async (id: string | number): Promise<StudentClass | null> => {
+    const accessToken = localStorage.getItem("accessToken");
     try {
-      const classList = await classAPI.getClassList();
-      return classList.find((item) => item.id === classId) ?? null;
+      const res = await axiosInstance.get(`api/lop-hoc/${id}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      return res.data;
     } catch (error) {
-      console.error("Error in getClassById:", error);
+      console.error("Lỗi lấy thông tin lớp:", error);
       return null;
     }
   },
-};
 
-export default classAPI;
+  getAllByStudent: async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    const userString = localStorage.getItem("user");
+    const user = userString ? JSON.parse(userString) : null;
+    const studentId = user?.id;
+
+    return await axiosInstance.get(`api/lop-hoc/hoc-sinh/${studentId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+  },
+
+  //cong
+};

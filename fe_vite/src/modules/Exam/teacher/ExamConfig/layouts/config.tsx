@@ -4,6 +4,7 @@ import type {
   LopHocRef,
 } from "../../../../../share/interfaces/exam.interface";
 import AssignTab from "../components/assignTab";
+import { CategoryForm } from "../../../../../share/components/CategoryForm/categoryForm";
 
 interface ConfigProp {
   deConfig: De;
@@ -18,7 +19,7 @@ const Config: React.FC<ConfigProp> = ({
   onToggleLop,
   handleChangeConfig,
 }) => {
-  const { tieuDe, thoiGian } = deConfig;
+  const { tieuDe, thoiGian, khoiLopId, monHocId } = deConfig;
 
   return (
     <div className="rounded-md bg-white px-5 py-6 text-gray-800 shadow dark:bg-darkmode-600 dark:text-slate-300">
@@ -38,6 +39,12 @@ const Config: React.FC<ConfigProp> = ({
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-none dark:bg-darkmode-800"
             />
           </div>
+
+          <CategoryForm
+            khoiLopId={khoiLopId}
+            monHocId={monHocId}
+            handleChangeConfig={handleChangeConfig}
+          />
 
           <div className="grid grid-cols-12">
             <div className="col-span-12">

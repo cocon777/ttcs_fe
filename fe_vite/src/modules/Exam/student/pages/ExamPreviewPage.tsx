@@ -1,15 +1,34 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import examAPI from "../../../../services/apis/examAPI";
+import UserAPI from "../../../../services/apis/userAPI";
 import type { ExamData } from "../../../../services/apis/examAPI";
+
+const getExamStartStorageKey = (examId: string) =>
+  `student.exam.startAt.${examId}`;
 
 const ExamPreviewPage = () => {
   const { examId } = useParams<{ examId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const classId = searchParams.get("classId");
 
   const [exam, setExam] = useState<ExamData | null>(null);
   const [loading, setLoading] = useState(true);
   const [startingExam, setStartingExam] = useState(false);
+  const [studentName, setStudentName] = useState("");
+
+  useEffect(() => {
+    const fetchStudentName = async () => {
+      const response = await UserAPI.getInfo();
+      const ten = response?.data?.ten;
+      if (typeof ten === "string" && ten.trim()) {
+        setStudentName(ten);
+      }
+    };
+
+    fetchStudentName();
+  }, []);
 
   useEffect(() => {
     const fetchExam = async () => {
@@ -30,9 +49,23 @@ const ExamPreviewPage = () => {
   const handleStartExam = async () => {
     if (!exam) return;
     setStartingExam(true);
+    localStorage.setItem(getExamStartStorageKey(exam.id), String(Date.now()));
     // Simulate a small delay for better UX
     await new Promise((resolve) => setTimeout(resolve, 500));
-    navigate(`/student/take-exam/${exam.id}`);
+    navigate(
+      classId
+        ? `/student/take-exam/${exam.id}?classId=${encodeURIComponent(classId)}`
+        : `/student/take-exam/${exam.id}`,
+    );
+  };
+
+  const backToExamList = () => {
+    if (classId) {
+      navigate(`/student/classroom/${classId}/exams`);
+      return;
+    }
+
+    navigate("/student");
   };
 
   if (loading) {
@@ -53,7 +86,7 @@ const ExamPreviewPage = () => {
             Không tìm thấy đề thi
           </p>
           <button
-            onClick={() => navigate("/student/exams")}
+            onClick={backToExamList}
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
           >
             Quay lại danh sách
@@ -72,7 +105,7 @@ const ExamPreviewPage = () => {
             {exam.title}
           </h1>
           <button
-            onClick={() => navigate("/student/exams")}
+            onClick={backToExamList}
             className="text-slate-400 hover:text-slate-600 text-lg"
           >
             ✕
@@ -95,20 +128,18 @@ const ExamPreviewPage = () => {
             </span>
             <span className="text-slate-600">{exam.questions.length} câu</span>
           </div>
-          <div className="flex justify-between py-2 border-b border-slate-200">
-            <span className="font-semibold text-slate-700">Loại câu hỏi:</span>
-            <span className="text-slate-600">Trắc nghiệm</span>
-          </div>
           <div className="flex justify-between py-2">
             <span className="font-semibold text-slate-700">Thí sinh:</span>
-            <span className="text-slate-600">{exam.studentName}</span>
+            <span className="text-slate-600">
+              {studentName || "Không có dữ liệu"}
+            </span>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex gap-3">
           <button
-            onClick={() => navigate("/student/exams")}
+            onClick={backToExamList}
             className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
           >
             Quay lại

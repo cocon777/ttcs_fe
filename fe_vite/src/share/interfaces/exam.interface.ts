@@ -8,6 +8,8 @@ export interface De {
   id: number;
   maHash: string;
   tieuDe: string;
+  khoiLopId: number;
+  monHocId: number;
   nguoiTao: NguoiDungRef;
   phamViGiao: "LOP" | "TU" | null;
   thoiGian: number;
