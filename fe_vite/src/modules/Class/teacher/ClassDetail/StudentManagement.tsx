@@ -8,11 +8,15 @@ interface StudentManagementProps {
 
 const StudentManagement = ({ classId }: StudentManagementProps) => {
   const [students, setStudents] = useState<any[]>([]);
+  
+  // 🚀 NÂNG CẤP 1: Thêm State để chứa TOÀN BỘ học sinh lấy từ Database
+  const [allStudents, setAllStudents] = useState<any[]>([]); 
+  
   const [studentCodeInput, setStudentCodeInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
-  // 1. Tải danh sách học sinh của lớp
+  // 1. Tải danh sách học sinh CỦA LỚP HIỆN TẠI
   const loadStudents = useCallback(async () => {
     setLoading(true);
     try {
@@ -21,20 +25,33 @@ const StudentManagement = ({ classId }: StudentManagementProps) => {
         setStudents(res.data);
       }
     } catch (err) {
-      console.error("Lỗi lấy danh sách học sinh:", err);
+      console.error("Lỗi lấy danh sách học sinh của lớp:", err);
     } finally {
       setLoading(false);
     }
   }, [classId]);
 
+  // 🚀 NÂNG CẤP 2: Tải TOÀN BỘ học sinh từ hệ thống về để đưa vào Dropdown
   useEffect(() => {
-    loadStudents();
+    const fetchAllStudents = async () => {
+      try {
+        const res = await StudentClassroomAPI.getAllStudents(); // Gọi API mới thêm
+        if (res && res.status === 200) {
+          setAllStudents(res.data);
+        }
+      } catch (error) {
+        console.error("Lỗi lấy danh sách toàn bộ học sinh:", error);
+      }
+    };
+
+    fetchAllStudents(); // Chạy hàm lấy toàn bộ HS
+    loadStudents();     // Chạy hàm lấy HS của lớp
   }, [loadStudents]);
 
   // 2. Thêm học sinh bằng Mã học sinh (Student Code)
   const handleAddStudent = async () => {
     if (!studentCodeInput.trim()) {
-      alert("Quang ơi, nhập mã học sinh đã chứ!");
+      alert("Quang ơi, chọn học sinh đã chứ!"); // Đã đổi câu thông báo cho hợp lý
       return;
     }
 
@@ -43,7 +60,7 @@ const StudentManagement = ({ classId }: StudentManagementProps) => {
       const res = await StudentClassroomAPI.addToClassByStudentCode(studentCodeInput.trim(), classId);
       if (res && res.status === 200) {
         alert("Thêm học sinh thành công!");
-        setStudentCodeInput("");
+        setStudentCodeInput(""); // Reset lại ô chọn
         loadStudents(); // Tải lại bảng sau khi thêm
       } else {
         alert("Lỗi: Không tìm thấy mã học sinh hoặc học sinh đã có trong lớp!");
@@ -56,11 +73,9 @@ const StudentManagement = ({ classId }: StudentManagementProps) => {
   };
 
   // 3. Xóa học sinh khỏi lớp
-  // 3. Xóa học sinh khỏi lớp
   const handleRemove = async (hocSinhId: number) => {
     if (window.confirm("Ông có chắc muốn đuổi học sinh này khỏi lớp không?")) {
       try {
-        // 🚀 Truyền thêm classId vào hàm delete
         const res = await StudentClassroomAPI.delete(classId, hocSinhId); 
         if (res && res.status === 200) {
           loadStudents(); // Tải lại danh sách
@@ -81,14 +96,20 @@ const StudentManagement = ({ classId }: StudentManagementProps) => {
         </div>
 
         <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Nhập Mã học sinh (VD: HS001)..."
-            className="border border-slate-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64 transition-all"
+          {/* 🚀 NÂNG CẤP 3: Thay thẻ <input> bằng thẻ <select> xịn xò */}
+          <select
+            className="border border-slate-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64 transition-all bg-white cursor-pointer"
             value={studentCodeInput}
             onChange={(e) => setStudentCodeInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleAddStudent()}
-          />
+          >
+            <option value="">-- Chọn học sinh để thêm --</option>
+            {allStudents.map((hs) => (
+              <option key={hs.id} value={hs.maHS}>
+                {hs.maHS} - {hs.nguoiDung?.hoTen || hs.nguoiDung?.tenNguoiDung || "Chưa cập nhật tên"}
+              </option>
+            ))}
+          </select>
+
           <button
             onClick={handleAddStudent}
             disabled={actionLoading}
@@ -134,19 +155,16 @@ const StudentManagement = ({ classId }: StudentManagementProps) => {
                   <td className="p-4 text-slate-500">{index + 1}</td>
                   
                   <td className="p-4 font-semibold text-slate-800">
-                    {/* 🚀 Lấy tên từ Object nguoiDung (Bắt dự phòng hoTen hoặc tenNguoiDung) */}
                     {item.nguoiDung?.hoTen || item.nguoiDung?.tenNguoiDung || item.nguoiDung?.tenDangNhap || "Chưa cập nhật tên"} 
                   </td>
                   
                   <td className="p-4">
                     <span className="bg-slate-100 px-2 py-1 rounded text-xs font-mono font-bold text-slate-600">
-                      {/* 🚀 Lấy trực tiếp maHS từ item (vì item chính là HocSinh) */}
                       {item.maHS || "Chưa có mã"}
                     </span>
                   </td>
                   
                   <td className="p-4 text-slate-500">
-                    {/* 🚀 Đổi từ ngayThamGia thành createdAt cho đúng với HocSinh.java */}
                     {item.createdAt ? new Date(item.createdAt).toLocaleDateString('vi-VN') : "---"}
                   </td>
                   
