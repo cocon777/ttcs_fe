@@ -29,6 +29,7 @@ const SetPointsButton: React.FC<SetPointsButtonProps> = (props) => {
     );
 
     setDe({ cauHois: cauHoisMoi });
+    localStorage.setItem("exam_json", JSON.stringify({ cauHois: cauHoisMoi })); //sua them diem vao Json tong
     setIsOpen(false);
   };
 

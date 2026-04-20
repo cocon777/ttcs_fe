@@ -1,7 +1,5 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-// 🚀 SỬA LỖI 1: Gộp Import và thêm ngoặc nhọn cho classAPI
-// 🚀 Sửa lại đoạn import ở đầu file: Tách riêng cái type ra
 import { classAPI } from "../../../../services/apis/classAPI";
 import type { StudentClass } from "../../../../services/apis/classAPI";
 
@@ -19,10 +17,11 @@ const ClassLectureListPage = () => {
 
       try {
         setLoading(true);
-        // 🚀 Bổ sung try-catch và lấy đúng phần res.data
         const res = await classAPI.getClassById(classId);
-        if (res.status === 200) {
-          setClassItem(res.data);
+        
+        // 🚀 ĐÃ SỬA: res chính là dữ liệu lớp học, không có .status hay .data
+        if (res) {
+          setClassItem(res);
         }
       } catch (error) {
         console.error("Lỗi lấy thông tin lớp:", error);
@@ -62,7 +61,6 @@ const ClassLectureListPage = () => {
     <div className="w-full text-gray-800">
       <div className="mx-auto w-11/12 max-w-4xl py-8">
         <h1 className="mb-4 text-2xl font-semibold">
-          {/* 🚀 SỬA LỖI 2: Đổi classItem.name thành classItem.tenLop */}
           Danh sách bài giảng - {classItem.tenLop}
         </h1>
         <div className="rounded-md bg-white p-5 text-sm text-slate-600 shadow-sm border border-slate-200">

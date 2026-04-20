@@ -44,7 +44,7 @@ const Login = () => {
           // 1. Lưu Token
           localStorage.setItem("accessToken", token);
 
-          // 2. 🚀 LƯU THÔNG TIN USER (Gồm ID, vaiTro, tenDangNhap) VÀO MÁY
+          // 2.LƯU THÔNG TIN USER (Gồm ID, vaiTro, tenDangNhap) VÀO MÁY ----------THEM
           if (loginData.user) {
             localStorage.setItem("user", JSON.stringify(loginData.user));
           }

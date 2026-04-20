@@ -1,6 +1,7 @@
 import { PlusIcon } from "lucide-react";
 import { useState, Fragment } from "react";
 import { ClassroomAPI } from "../../../../../services/apis/classroomAPI";
+import { CategoryForm } from "../../../../../share/components/CategoryForm/categoryForm";
 
 const AddClassBtn = () => {
   const [isOpenAdd, setOpenAdd] = useState<boolean>(false);
@@ -9,6 +10,8 @@ const AddClassBtn = () => {
     className: "",
     classYear: "",
     classGroupId: -2,
+    khoiLopId: -1,
+    monHocId: -1,
   });
 
   const handleToggleAdd = () => {
@@ -20,8 +23,13 @@ const AddClassBtn = () => {
   };
 
   const handleSubmit = async () => {
-    const { className, classYear } = values;
-    const response: any = await ClassroomAPI.create(className, classYear);
+    const { className, classYear, khoiLopId, monHocId } = values;
+    const response: any = await ClassroomAPI.create(
+      className,
+      classYear,
+      khoiLopId,
+      monHocId,
+    );
     const data = response.data;
     handleChangeValue("className", "");
   };
@@ -30,7 +38,14 @@ const AddClassBtn = () => {
     await handleSubmit();
 
     setOpenAdd(false);
+    window.location.reload();
   };
+
+  const isValid =
+    values.className &&
+    values.classYear &&
+    values.khoiLopId !== -1 &&
+    values.monHocId !== -1;
 
   return (
     <Fragment>
@@ -41,6 +56,7 @@ const AddClassBtn = () => {
         <PlusIcon className="size-4 text-white" />
         <span className="text-sm font-bold text-white">Tạo lớp học</span>
       </div>
+
       {isOpenAdd && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -62,7 +78,7 @@ const AddClassBtn = () => {
                 </label>
                 <input
                   id="className"
-                  value={values["className"]}
+                  value={values.className}
                   name="className"
                   onChange={(e) =>
                     handleChangeValue(e.target.name, e.target.value)
@@ -74,12 +90,12 @@ const AddClassBtn = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="className" className="text-sm">
+                <label htmlFor="classYear" className="text-sm">
                   Năm học
                 </label>
                 <input
                   id="classYear"
-                  value={values["classYear"]}
+                  value={values.classYear}
                   name="classYear"
                   onChange={(e) =>
                     handleChangeValue(e.target.name, e.target.value)
@@ -89,6 +105,12 @@ const AddClassBtn = () => {
                   placeholder="Nhập năm học"
                 />
               </div>
+
+              <CategoryForm
+                khoiLopId={values.khoiLopId}
+                monHocId={values.monHocId}
+                handleChangeConfig={handleChangeValue}
+              />
             </div>
 
             <div className="flex items-center justify-end gap-2 p-3">
@@ -105,7 +127,7 @@ const AddClassBtn = () => {
                 type="button"
                 className="rounded-md bg-blue-800 px-8 py-2.5 hover:cursor-pointer hover:bg-blue-700 disabled:cursor-default disabled:opacity-25 disabled:hover:bg-blue-800"
                 onClick={handleSubmit}
-                disabled={!(values["className"] && values["classYear"])}
+                disabled={!isValid}
               >
                 <div className="text-sm font-semibold text-white">Lưu</div>
               </button>
@@ -113,8 +135,7 @@ const AddClassBtn = () => {
               <button
                 type="submit"
                 className="rounded-md bg-cyan-600 px-4 py-2.5 hover:cursor-pointer hover:bg-cyan-500 disabled:cursor-default disabled:opacity-25 disabled:hover:bg-cyan-600"
-                disabled={!(values["className"] && values["classYear"])}
-                onClick={handleSubmitAndClose}
+                disabled={!isValid}
               >
                 <div className="text-sm font-semibold text-white">
                   Lưu và đóng

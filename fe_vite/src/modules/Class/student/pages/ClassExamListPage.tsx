@@ -27,8 +27,15 @@ const ClassExamListPage = () => {
         examAPI.getExamListByClass(classId),
       ]);
 
-      setClassItem(classData.data);
-      setExamList(allExams);
+      // 🚀 ĐÃ SỬA: classData đã là StudentClass, không cần .data nữa
+      if (classData) {
+        setClassItem(classData);
+      }
+      
+      if (allExams) {
+        setExamList(allExams);
+      }
+      
       setLoading(false);
     };
 
@@ -39,7 +46,7 @@ const ClassExamListPage = () => {
     return (
       <div className="w-full text-gray-800">
         <div className="mx-auto w-11/12 max-w-5xl py-8">
-          <ClassExamStatus message="Dang tai danh sach de cua lop..." />
+          <ClassExamStatus message="Đang tải danh sách đề của lớp..." />
         </div>
       </div>
     );
@@ -49,7 +56,7 @@ const ClassExamListPage = () => {
     return (
       <div className="w-full text-gray-800">
         <div className="mx-auto w-11/12 max-w-5xl py-8">
-          <ClassExamStatus message="Khong tim thay lop hoc." />
+          <ClassExamStatus message="Không tìm thấy lớp học." />
         </div>
       </div>
     );
@@ -65,7 +72,7 @@ const ClassExamListPage = () => {
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {examList.map((exam) => (
-              <ClassExamCard key={exam.id} exam={exam} />
+              <ClassExamCard key={exam.id} exam={exam} classId={classId} />
             ))}
           </div>
         )}

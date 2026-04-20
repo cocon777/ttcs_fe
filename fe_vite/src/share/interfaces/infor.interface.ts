@@ -1,6 +1,16 @@
 import { GioiTinh } from "../constant/constant";
 import type { HocSinh, GiaoVien } from "./user.interface";
 
+export interface KhoiLop {
+  id: number;
+  ten: string;
+}
+
+export interface MonHoc {
+  id: number;
+  ten: string;
+}
+
 export interface LopHoc {
   id: number;
   tenLop: string;

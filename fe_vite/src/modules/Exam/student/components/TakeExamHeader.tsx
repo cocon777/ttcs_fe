@@ -5,6 +5,7 @@ interface TakeExamHeaderProps {
   durationSeconds: number;
   onTimeUp: () => void;
   onSubmit: () => void;
+  submitting?: boolean;
 }
 
 const TakeExamHeader = ({
@@ -13,6 +14,7 @@ const TakeExamHeader = ({
   durationSeconds,
   onTimeUp,
   onSubmit,
+  submitting = false,
 }: TakeExamHeaderProps) => {
   return (
     <header className="flex flex-shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-white px-6 py-3">
@@ -32,9 +34,10 @@ const TakeExamHeader = ({
         <button
           type="button"
           onClick={onSubmit}
+          disabled={submitting}
           className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
         >
-          Nộp bài
+          {submitting ? "Dang nop..." : "Nộp bài"}
         </button>
       </div>
     </header>

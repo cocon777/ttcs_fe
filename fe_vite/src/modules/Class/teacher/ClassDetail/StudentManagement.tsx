@@ -8,15 +8,11 @@ interface StudentManagementProps {
 
 const StudentManagement = ({ classId }: StudentManagementProps) => {
   const [students, setStudents] = useState<any[]>([]);
-  
-  // 🚀 NÂNG CẤP 1: Thêm State để chứa TOÀN BỘ học sinh lấy từ Database
-  const [allStudents, setAllStudents] = useState<any[]>([]); 
-  
   const [studentCodeInput, setStudentCodeInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
-  // 1. Tải danh sách học sinh CỦA LỚP HIỆN TẠI
+  // 1. Tải danh sách học sinh của lớp
   const loadStudents = useCallback(async () => {
     setLoading(true);
     try {
@@ -25,42 +21,32 @@ const StudentManagement = ({ classId }: StudentManagementProps) => {
         setStudents(res.data);
       }
     } catch (err) {
-      console.error("Lỗi lấy danh sách học sinh của lớp:", err);
+      console.error("Lỗi lấy danh sách học sinh:", err);
     } finally {
       setLoading(false);
     }
   }, [classId]);
 
-  // 🚀 NÂNG CẤP 2: Tải TOÀN BỘ học sinh từ hệ thống về để đưa vào Dropdown
   useEffect(() => {
-    const fetchAllStudents = async () => {
-      try {
-        const res = await StudentClassroomAPI.getAllStudents(); // Gọi API mới thêm
-        if (res && res.status === 200) {
-          setAllStudents(res.data);
-        }
-      } catch (error) {
-        console.error("Lỗi lấy danh sách toàn bộ học sinh:", error);
-      }
-    };
-
-    fetchAllStudents(); // Chạy hàm lấy toàn bộ HS
-    loadStudents();     // Chạy hàm lấy HS của lớp
+    loadStudents();
   }, [loadStudents]);
 
   // 2. Thêm học sinh bằng Mã học sinh (Student Code)
   const handleAddStudent = async () => {
     if (!studentCodeInput.trim()) {
-      alert("Quang ơi, chọn học sinh đã chứ!"); // Đã đổi câu thông báo cho hợp lý
+      alert("Hãy nhập mã học sinh");
       return;
     }
 
     setActionLoading(true);
     try {
-      const res = await StudentClassroomAPI.addToClassByStudentCode(studentCodeInput.trim(), classId);
+      const res = await StudentClassroomAPI.addToClassByStudentCode(
+        studentCodeInput.trim(),
+        classId,
+      );
       if (res && res.status === 200) {
         alert("Thêm học sinh thành công!");
-        setStudentCodeInput(""); // Reset lại ô chọn
+        setStudentCodeInput("");
         loadStudents(); // Tải lại bảng sau khi thêm
       } else {
         alert("Lỗi: Không tìm thấy mã học sinh hoặc học sinh đã có trong lớp!");
@@ -73,10 +59,12 @@ const StudentManagement = ({ classId }: StudentManagementProps) => {
   };
 
   // 3. Xóa học sinh khỏi lớp
+  // 3. Xóa học sinh khỏi lớp
   const handleRemove = async (hocSinhId: number) => {
-    if (window.confirm("Ông có chắc muốn đuổi học sinh này khỏi lớp không?")) {
+    if (window.confirm("Xác nhận xóa tài khoản học sinh này khỏi lớp ?")) {
       try {
-        const res = await StudentClassroomAPI.delete(classId, hocSinhId); 
+        // 🚀 Truyền thêm classId vào hàm delete
+        const res = await StudentClassroomAPI.delete(classId, hocSinhId);
         if (res && res.status === 200) {
           loadStudents(); // Tải lại danh sách
         }
@@ -91,31 +79,33 @@ const StudentManagement = ({ classId }: StudentManagementProps) => {
       {/* Header & Input */}
       <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50">
         <div>
-          <h2 className="text-xl font-bold text-slate-800">Danh sách học sinh trong lớp</h2>
-          <p className="text-sm text-slate-500">Quản lý và cập nhật thành viên của lớp học</p>
+          <h2 className="text-xl font-bold text-slate-800">
+            Danh sách học sinh trong lớp
+          </h2>
+          <p className="text-sm text-slate-500">
+            Quản lý và cập nhật thành viên của lớp học
+          </p>
         </div>
 
         <div className="flex gap-2">
-          {/* 🚀 NÂNG CẤP 3: Thay thẻ <input> bằng thẻ <select> xịn xò */}
-          <select
-            className="border border-slate-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64 transition-all bg-white cursor-pointer"
+          <input
+            type="text"
+            placeholder="Nhập Mã học sinh (VD: HS001)..."
+            className="border border-slate-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64 transition-all"
             value={studentCodeInput}
             onChange={(e) => setStudentCodeInput(e.target.value)}
-          >
-            <option value="">-- Chọn học sinh để thêm --</option>
-            {allStudents.map((hs) => (
-              <option key={hs.id} value={hs.maHS}>
-                {hs.maHS} - {hs.nguoiDung?.hoTen || hs.nguoiDung?.tenNguoiDung || "Chưa cập nhật tên"}
-              </option>
-            ))}
-          </select>
-
+            onKeyPress={(e) => e.key === "Enter" && handleAddStudent()}
+          />
           <button
             onClick={handleAddStudent}
             disabled={actionLoading}
             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors disabled:bg-slate-400"
           >
-            {actionLoading ? <Loader2 size={18} className="animate-spin" /> : <UserPlus size={18} />}
+            {actionLoading ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <UserPlus size={18} />
+            )}
             Thêm
           </button>
         </div>
@@ -130,7 +120,9 @@ const StudentManagement = ({ classId }: StudentManagementProps) => {
               <th className="p-4 font-bold text-slate-700">Tên học sinh</th>
               <th className="p-4 font-bold text-slate-700">Mã số học sinh</th>
               <th className="p-4 font-bold text-slate-700">Ngày vào lớp</th>
-              <th className="p-4 font-bold text-slate-700 text-center">Hành động</th>
+              <th className="p-4 font-bold text-slate-700 text-center">
+                Hành động
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -145,29 +137,43 @@ const StudentManagement = ({ classId }: StudentManagementProps) => {
               </tr>
             ) : students.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-10 text-center text-slate-400 italic">
+                <td
+                  colSpan={5}
+                  className="p-10 text-center text-slate-400 italic"
+                >
                   Lớp học hiện tại chưa có học sinh nào.
                 </td>
               </tr>
             ) : (
               students.map((item, index) => (
-                <tr key={item.id} className="border-b border-slate-50 hover:bg-blue-50/30 transition-colors">
+                <tr
+                  key={item.id}
+                  className="border-b border-slate-50 hover:bg-blue-50/30 transition-colors"
+                >
                   <td className="p-4 text-slate-500">{index + 1}</td>
-                  
+
                   <td className="p-4 font-semibold text-slate-800">
-                    {item.nguoiDung?.hoTen || item.nguoiDung?.tenNguoiDung || item.nguoiDung?.tenDangNhap || "Chưa cập nhật tên"} 
+                    {/* 🚀 Lấy tên từ Object nguoiDung (Bắt dự phòng hoTen hoặc tenNguoiDung) */}
+                    {item.nguoiDung?.hoTen ||
+                      item.nguoiDung?.tenNguoiDung ||
+                      item.nguoiDung?.tenDangNhap ||
+                      "Chưa cập nhật tên"}
                   </td>
-                  
+
                   <td className="p-4">
                     <span className="bg-slate-100 px-2 py-1 rounded text-xs font-mono font-bold text-slate-600">
+                      {/* 🚀 Lấy trực tiếp maHS từ item (vì item chính là HocSinh) */}
                       {item.maHS || "Chưa có mã"}
                     </span>
                   </td>
-                  
+
                   <td className="p-4 text-slate-500">
-                    {item.createdAt ? new Date(item.createdAt).toLocaleDateString('vi-VN') : "---"}
+                    {/* 🚀 Đổi từ ngayThamGia thành createdAt cho đúng với HocSinh.java */}
+                    {item.createdAt
+                      ? new Date(item.createdAt).toLocaleDateString("vi-VN")
+                      : "---"}
                   </td>
-                  
+
                   <td className="p-4 text-center">
                     <button
                       onClick={() => handleRemove(item.id)}

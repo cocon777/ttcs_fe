@@ -10,7 +10,7 @@ const ClassExamHeader = ({ classItem }: ClassExamHeaderProps) => {
     <div className="mb-5 flex items-center justify-between gap-3">
       <div>
         <h1 className="text-2xl font-semibold">
-          Danh sách đề - {classItem.name}
+          Danh sách đề - {classItem.tenLop}
         </h1>
         <p className="mt-1 text-sm text-slate-600">Mã lớp: {classItem.maLop}</p>
       </div>
