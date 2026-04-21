@@ -11,8 +11,6 @@ const TABS = [
   { icon: SiGoogleclassroom, link: "/teacher/class/management" },
   { icon: LiaSchoolSolid, link: "/teacher/class/management" },
   { icon: PiExam, link: "/teacher/class/management" },
-  // 2. Thêm một nút mới tinh vào danh sách Menu
-  { icon: MdOutlinePostAdd, link: "/teacher/class/tao-bai-giang" },
 ];
 
 const TeacherSideBar = () => {

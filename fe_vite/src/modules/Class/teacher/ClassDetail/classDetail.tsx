@@ -3,6 +3,9 @@ import { CalendarCheck, Newspaper, User } from "lucide-react";
 import { useParams } from "react-router-dom";
 import StudentManagement from "./StudentManagement";
 
+// 🚀 THÊM DÒNG NÀY ĐỂ GỌI COMPONENT MỚI VÀO
+import QuanLyBaiGiang from "./QuanLyBaiGiang";
+
 const TABS = [
   { icon: User, label: "Danh sách học sinh", index: 0 },
   { icon: CalendarCheck, label: "Bài giảng", index: 1 },
@@ -12,7 +15,6 @@ const TABS = [
 const ClassDetail = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   
-  // Đã xóa 1 dòng thừa, chỉ giữ lại 1 khai báo id duy nhất
   const { id } = useParams(); 
 
   const renderContent = () => {
@@ -25,11 +27,9 @@ const ClassDetail = () => {
         );
 
       case 1:
-        return (
-          <div className="p-10 text-center text-gray-500">
-            Khu vực quản lý bài giảng
-          </div>
-        );
+        // 🚀 BÊ NGUYÊN CÁI GIAO DIỆN QUẢN LÝ BÀI GIẢNG ĐẶT VÀO ĐÂY
+        return <QuanLyBaiGiang />;
+
       case 2:
         return (
           <div className="p-10 text-center text-gray-500">
@@ -67,7 +67,7 @@ const ClassDetail = () => {
         </div>
       </div>
 
-      {/* Nội dung bên phải */}
+      {/* Nội dung bên phải (Giao diện Quản lý Bài Giảng đã được render ở đây) */}
       <div className="col-span-10 bg-slate-50/50 p-6">{renderContent()}</div>
     </div>
   );

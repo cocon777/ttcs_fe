@@ -1,17 +1,16 @@
 import TeacherLayout from "../../share/layouts/teacherLayout";
-import CreateLecture from "../../CreateLecture";
+// Đã xóa import CreateLecture vì không còn dùng làm trang riêng nữa
 import ClassManagement from "../../modules/Class/teacher/ClassManagement/classManagement";
-// ⚠️ Đảm bảo file classDetail.tsx này CHÍNH LÀ cái file tôi vừa code cho ông lúc nãy (cái có menu Bài giảng, Đề thi ấy)
 import ClassDetail from "../../modules/Class/teacher/ClassDetail/classDetail"; 
 
 const TeacherClassRoutes = {
   path: "teacher", 
   element: <TeacherLayout />,
   children: [
-    { path: "class/tao-bai-giang", element: <CreateLecture /> },
+    // 🚀 Tiễn trang tạo bài giảng ra chuồng gà!
     { path: "class/management", element: <ClassManagement /> },
     
-    // 🚀 ĐÃ SỬA: Đổi :classId thành :id để khớp với giao diện
+    // Giữ nguyên id để khớp với params trong component
     { path: "class/classroom-detail/:id", element: <ClassDetail /> },
   ],
 };

@@ -150,7 +150,7 @@ const ClassDetailPage = () => {
         </Link>
 
         <Link
-          to={`/student/class/classroom-detail/${classItem.id}/lectures`}
+          to={`/student/classroom/${classItem.id}/lectures`}
           className="group flex items-start gap-4 rounded-xl bg-white px-6 py-5 shadow-sm transition-all hover:border hover:border-teal-300 hover:shadow-md dark:bg-darkmode-600"
         >
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-900/30">

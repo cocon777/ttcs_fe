@@ -1,28 +1,17 @@
-// import TeacherLayout from "../../../share/layouts/teacherLayout";
-// import ClassManagement from "./ClassManagement/classManagement";
-// import ClassDetail from "./ClassDetail/classDetail";
-// const TeacherClassRoutes = {
-//   path: "class",
-//   element: <TeacherLayout />,
-//   children: [
-//     { path: "management", element: <ClassManagement /> },
-//     { path: "classroom-detail/:classId", element: <ClassDetail /> },
-//   ],
-// };
-
-// export default TeacherClassRoutes;
-
 import TeacherLayout from "../../../share/layouts/teacherLayout";
-// import CreateLecture from "../../CreateLecture";
+// ĐÃ XÓA: import CreateLecture vì không còn dùng làm trang riêng nữa
 import ClassManagement from "./ClassManagement/classManagement";
 import ClassDetail from "./ClassDetail/classDetail";
 
 const TeacherClassRoutes = {
-  path: "",
+  path: "", 
   element: <TeacherLayout />,
   children: [
-    // { path: "class/tao-bai-giang", element: <CreateLecture /> },
+    // ĐÃ XÓA: route class/tao-bai-giang
+    
     { path: "class/management", element: <ClassManagement /> },
+    
+    // Giữ nguyên để vào chi tiết lớp
     { path: "class/classroom-detail/:id", element: <ClassDetail /> },
   ],
 };
