@@ -24,7 +24,8 @@ const Editor = () => {
       const converted = convertToJSON(editorValue);
       setDe(converted);
       localStorage.setItem("exam", editorValue);
-    }, 1000);
+      localStorage.setItem("exam_json", JSON.stringify(converted));
+    }, 500);
 
     return () => {
       if (debounceTimeout.current) {
@@ -35,7 +36,7 @@ const Editor = () => {
 
   return (
     <div className="grid grid-cols-12">
-      <PreviewLeft de={de} setDe={setDe} handleGoToLine={handleGoToLine} />
+      <PreviewLeft de={de} handleGoToLine={handleGoToLine} />
 
       <EditorRight
         value={editorValue}

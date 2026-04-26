@@ -8,9 +8,9 @@ const TABS = [
   {
     icon: SiGoogleclassroom,
     label: "Lớp học",
-    link: "",
+    link: "/student/classroom",
   },
-  { icon: PiExam, label: "Đề", link: "" },
+  { icon: PiExam, label: "Đề", link: "/student/my-exams" },
 ];
 
 const StudentHome: React.FC<Props> = (props) => {

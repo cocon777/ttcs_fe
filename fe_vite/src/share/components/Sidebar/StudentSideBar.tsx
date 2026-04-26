@@ -7,7 +7,7 @@ import { NavLink } from "react-router-dom";
 const TABS = [
   { icon: LuHouse, link: "/student" },
   { icon: SiGoogleclassroom, link: "/student/classroom" },
-  { icon: PiExam, link: "/temp" },
+  { icon: PiExam, link: "/student/my-exams" },
 ];
 
 const StudentSideBar = () => {

@@ -150,7 +150,7 @@ const CreateExamAPI = {
 
   remove: async (id: string): Promise<AxiosResponse | null> => {
     try {
-      const token = localStorage.getItem("accessToken"); 
+      const token = localStorage.getItem("accessToken");
       const response = await axiosInstance.delete(
         `${CREATE_EXAM_API_URL}/${id}`,
         {
@@ -164,6 +164,25 @@ const CreateExamAPI = {
       return response;
     } catch (error) {
       console.log(error);
+      return null;
+    }
+  },
+  
+  //hs tu tạo đề
+  updateDuration: async (
+    deId: number | string,
+    thoiGian: number,
+  ): Promise<AxiosResponse | null> => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axiosInstance.patch(
+        `${CREATE_EXAM_API_URL}/${deId}/duration?thoiGian=${thoiGian}`,
+        null,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      return response;
+    } catch (error) {
+      console.error(error);
       return null;
     }
   },

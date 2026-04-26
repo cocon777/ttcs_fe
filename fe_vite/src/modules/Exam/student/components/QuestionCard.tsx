@@ -1,4 +1,6 @@
 import type { ExamQuestion } from "../../../../services/apis/examAPI";
+import renderContent from "../../../../share/utils/renderContent";
+
 interface QuestionCardProps {
   question: ExamQuestion;
   questionNumber: number;
@@ -12,7 +14,7 @@ interface QuestionCardProps {
 const QuestionCard = ({
   question,
   questionNumber,
-  totalQuestions,
+  // totalQuestions,
   selectedOptionId,
   flagged,
   onSelectOption,
@@ -40,7 +42,7 @@ const QuestionCard = ({
       </div>
 
       <p className="mb-5 text-base leading-relaxed text-slate-800">
-        {question.text}
+        {renderContent(question.text)}
       </p>
 
       <div className="grid grid-cols-2 gap-3">
@@ -69,7 +71,7 @@ const QuestionCard = ({
                   {String.fromCharCode(65 + optionIndex)}
                 </span>
                 <span className="flex-1 text-sm text-slate-800">
-                  {option.text}
+                  {renderContent(option.text)}
                 </span>
               </div>
             </button>

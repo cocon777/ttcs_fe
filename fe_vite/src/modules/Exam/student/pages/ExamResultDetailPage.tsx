@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import examAPI from "../../../../services/apis/examAPI";
 import type { ChiTietKetQua, KetQua } from "../../../../services/apis/examAPI";
+import renderContent from "../../../../share/utils/renderContent";
 
 const resultClassMapStorageKey = "student.result.classMap";
 
@@ -160,7 +161,7 @@ const ExamResultDetailPage = () => {
                     className="rounded-md border border-slate-200 bg-white p-4"
                   >
                     <p className="text-sm font-bold text-slate-900">
-                      Câu {cauHoi.thuTu}: {cauHoi.noiDung}
+                      Câu {cauHoi.thuTu}: {renderContent(cauHoi.noiDung)}
                     </p>
 
                     <div className="mt-3 grid gap-2 text-sm text-slate-700 md:grid-cols-2">
@@ -183,7 +184,7 @@ const ExamResultDetailPage = () => {
                             <span className="font-semibold">
                               {luaChon.kyHieu}.
                             </span>{" "}
-                            {luaChon.noiDung}
+                            {renderContent(luaChon.noiDung)}
                           </p>
                         );
                       })}

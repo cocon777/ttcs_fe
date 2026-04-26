@@ -2,6 +2,8 @@ import { useState } from "react";
 import { CalendarCheck, Newspaper, User } from "lucide-react";
 import { useParams } from "react-router-dom";
 import StudentManagement from "./StudentManagement";
+import ExamListByClass from "./ExamListByClass";
+import QuanLyBaiGiang from "./QuanLyBaiGiang";
 
 const TABS = [
   { icon: User, label: "Danh sách học sinh", index: 0 },
@@ -12,7 +14,6 @@ const TABS = [
 const ClassDetail = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // 🚀 ĐÃ SỬA: Đổi classId thành id để KHỚP 100% VỚI ROUTER
   const { id } = useParams();
 
   const renderContent = () => {
@@ -25,16 +26,12 @@ const ClassDetail = () => {
         );
 
       case 1:
-        return (
-          <div className="p-10 text-center text-gray-500">
-            Khu vực quản lý bài giảng
-          </div>
-        );
+        return <QuanLyBaiGiang />;
       case 2:
-        return (
-          <div className="p-10 text-center text-gray-500">
-            Khu vực quản lý đề thi
-          </div>
+        return id ? (
+          <ExamListByClass classId={Number(id)} />
+        ) : (
+          <div>Không tìm thấy đề</div>
         );
       default:
         return null;

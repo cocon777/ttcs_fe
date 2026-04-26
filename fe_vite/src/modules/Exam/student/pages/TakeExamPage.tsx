@@ -161,6 +161,7 @@ const TakeExamPage = () => {
         durationSecondsUsed,
         startedAtMs: startedAt,
         flaggedQuestionIds: Array.from(flaggedQuestionIds),
+        lopId: classId ? Number(classId) : undefined,
       });
 
       localStorage.removeItem(getExamStartStorageKey(examData.id));

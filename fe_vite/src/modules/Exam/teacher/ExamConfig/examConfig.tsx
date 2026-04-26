@@ -35,6 +35,11 @@ const ExamConfig = () => {
 
     if (response?.status === 201) {
       const updated: De = response.data;
+
+      //xoa localStorage
+      localStorage.removeItem("exam");
+      localStorage.removeItem("exam_json");
+
       navigate(`/teacher/exam/exam-publish/${updated.maHash}`);
     }
   };

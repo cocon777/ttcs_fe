@@ -71,6 +71,27 @@ const parseBangDapAn = (vanBan: string): Record<string, string> => {
   return bangDapAn;
 };
 
+// const parseLuaChons = (
+//   noiDungCau: string,
+//   bangDapAn: Record<string, string>,
+//   thuTu: number,
+//   cacDong: string[],
+// ): Record<string, LuaChon> => {
+//   const luaChons: Record<string, LuaChon> = {};
+
+//   for (const match of noiDungCau.matchAll(/^([A-G])\.\s+(.+)/gm)) {
+//     const kyHieu = match[1];
+//     luaChons[kyHieu] = {
+//       kyHieu,
+//       noiDung: match[2].trim(),
+//       laDapAn: bangDapAn[String(thuTu)] === kyHieu,
+//       dong: cacDong.findIndex((dong) => dong.includes(`${kyHieu}.`)) + 1,
+//     };
+//   }
+
+//   return luaChons;
+// };
+
 const parseLuaChons = (
   noiDungCau: string,
   bangDapAn: Record<string, string>,
@@ -79,15 +100,24 @@ const parseLuaChons = (
 ): Record<string, LuaChon> => {
   const luaChons: Record<string, LuaChon> = {};
 
-  for (const match of noiDungCau.matchAll(/^([A-G])\.\s+(.+)/gm)) {
-    const kyHieu = match[1];
+  // Tách vị trí bắt đầu của từng lựa chọn
+  const starts: { index: number; kyHieu: string }[] = [];
+  for (const m of noiDungCau.matchAll(/^([A-G])\.\s/gm)) {
+    starts.push({ index: m.index!, kyHieu: m[1] });
+  }
+
+  starts.forEach(({ index, kyHieu }, i) => {
+    const start = index + `${kyHieu}. `.length; // bỏ "A. "
+    const end = starts[i + 1]?.index ?? noiDungCau.length;
+    const noiDung = noiDungCau.slice(start, end).trim();
+
     luaChons[kyHieu] = {
       kyHieu,
-      noiDung: match[2].trim(),
+      noiDung,
       laDapAn: bangDapAn[String(thuTu)] === kyHieu,
       dong: cacDong.findIndex((dong) => dong.includes(`${kyHieu}.`)) + 1,
     };
-  }
+  });
 
   return luaChons;
 };
@@ -118,11 +148,18 @@ const convertToJSON = (vanBan: string): NoiDungDe => {
     const noiDungBlock = vanBanChinh.slice(viTriBatDau, viTriKetThuc).trim();
 
     // 4. Tách nội dung câu hỏi (dòng đầu tiên)
-    const viTriXuongDong = noiDungBlock.indexOf("\n");
+    // const viTriXuongDong = noiDungBlock.indexOf("\n");
+    // const noiDung =
+    //   viTriXuongDong === -1
+    //     ? noiDungBlock
+    //     : noiDungBlock.slice(0, viTriXuongDong).trim();
+
+    // 4. Tách nội dung câu hỏi (đến trước lựa chọn đầu tiên)
+    const viTriLuaChonDau = noiDungBlock.search(/^[A-G]\.\s/m);
     const noiDung =
-      viTriXuongDong === -1
-        ? noiDungBlock
-        : noiDungBlock.slice(0, viTriXuongDong).trim();
+      viTriLuaChonDau === -1
+        ? noiDungBlock.trim()
+        : noiDungBlock.slice(0, viTriLuaChonDau).trim();
 
     // 5. Tìm số dòng của câu hỏi
     const dongCauHoi =
@@ -137,11 +174,18 @@ const convertToJSON = (vanBan: string): NoiDungDe => {
       noiDung,
       luaChons,
       dong: dongCauHoi,
-      diem: 0, // mặc định 0
+      diem: 0, // tính tự động bên dưới
     };
   });
 
+  // Tự chia đều trên thang 10 sau khi có đủ số câu
+  const soCau = Object.keys(cauHois).length;
+  const diemMoiCau = soCau > 0 ? 10 / soCau : 0;
+  Object.keys(cauHois).forEach((key) => {
+    cauHois[key].diem = diemMoiCau;
+  });
+
   return { cauHois };
-};
+};;
 
 export default convertToJSON;

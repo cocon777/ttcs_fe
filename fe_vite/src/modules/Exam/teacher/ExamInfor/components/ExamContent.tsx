@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import CreateExamAPI from "../../../../../services/apis/createExamAPI";
 import type { De } from "../../../../../share/interfaces/exam.interface";
+import renderContent from "../../../../../share/utils/renderContent";
 
 interface ExamContentProps {}
 
@@ -73,7 +74,7 @@ export const ExamContent: React.FC<ExamContentProps> = (props) => {
                   >
                     <h1 className="font-semibold text-gray-800">{`Câu ${cauHoi.thuTu}`}</h1>
                     <p className="leading-relaxed text-gray-700">
-                      {cauHoi.noiDung}
+                      {renderContent(cauHoi.noiDung)}
                     </p>
 
                     <ul className="mt-4 space-y-2">
@@ -82,7 +83,7 @@ export const ExamContent: React.FC<ExamContentProps> = (props) => {
                           <span className="font-semibold">
                             {luaChon.kyHieu}.{" "}
                           </span>
-                          {luaChon.noiDung}
+                          {renderContent(luaChon.noiDung)}
                         </li>
                       ))}
                     </ul>
