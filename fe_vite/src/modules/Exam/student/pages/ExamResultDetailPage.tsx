@@ -25,6 +25,7 @@ const formatDuration = (seconds: number) => {
   const days = Math.floor(seconds / daySeconds);
   const hours = Math.floor((seconds % daySeconds) / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
 
   if (days > 0) {
     return `${days} ngày ${hours} giờ ${minutes} phút`;
@@ -34,7 +35,10 @@ const formatDuration = (seconds: number) => {
     return `${hours} giờ ${minutes} phút`;
   }
 
-  return `${minutes} phút`;
+  if (minutes > 0)
+    return `${minutes} phút`;
+  
+  return `${secs} giây`;
 };
 
 const ExamResultDetailPage = () => {
