@@ -12,7 +12,18 @@ const ScoreDistributionChart: React.FC<ScoreDistributionChartProps> = ({
     <h3 className="font-bold text-indigo-700 mb-4">Phân phối điểm</h3>
     <Bar
       data={data}
-      options={{ responsive: true, plugins: { legend: { display: false } } }}
+      options={{
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1,
+            },
+          },
+        },
+      }}
     />
   </div>
 );

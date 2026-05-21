@@ -17,7 +17,19 @@ const HardestQuestionsChart: React.FC<HardestQuestionsChartProps> = ({
       options={{
         indexAxis: "y",
         responsive: true,
-        plugins: { legend: { display: false } },
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1,
+                // ensure integers shown
+                callback: function (value: any) {
+                  return Number(value).toString();
+                },
+              },
+            },
+          },
       }}
     />
   </div>

@@ -20,6 +20,9 @@ export interface ExamData {
   title: string;
   nguoiTaoId: string;
   nguoiTaoTen: string;
+  maHash?: string;
+  batDau?: string;
+  ketThuc?: string;
   durationSeconds: number;
   questions: ExamQuestion[];
   maLopGiao?: string[];
@@ -29,6 +32,9 @@ export interface ExamData {
 export interface ExamListItem {
   id: string;
   title: string;
+  maHash?: string;
+  batDau? : string;
+  ketThuc?: string;
   durationSeconds: number;
   questions: ExamQuestion[];
   maLopGiao?: string[];
@@ -85,15 +91,14 @@ export interface ChiTietKetQua {
   cauHoiList: ChiTietCauHoi[];
 }
 
-interface BackendClassItem {
-  id: number;
-  maLop: string;
-}
-
 interface BackendExamItem {
   id: number;
+  maHash?: string;
   tieuDe: string;
   thoiGian: number | null;
+  batDau?: string;
+  ketThuc?: string;
+  createdAt?: string;
 }
 
 interface BackendExamDetail {
@@ -102,6 +107,8 @@ interface BackendExamDetail {
   nguoiTaoTen: string;
   tieuDe: string;
   thoiGian: number | null;
+  batDau?: string;
+  ketThuc?: string;
   createdAt?: string;
   cauHois: Array<{
     cauHoiId: number;
@@ -182,7 +189,7 @@ const getCachedKetQua = (ketQuaId: string): KetQua | null => {
 
 import moment from "moment";
 const toLocalDateTimeIso = (date: Date) =>
-  moment(date).utcOffset(7).format("YYYY-MM-DDTHH:mm:ss");
+  moment(date).format("YYYY-MM-DDTHH:mm:ss");
 
 const mapBackendKetQua = (raw: BackendKetQuaResponse): KetQua => ({
   id: raw.ketQuaId,
@@ -273,9 +280,12 @@ const examAPI = {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      return (res.data as any[]).map((de) => ({
+      return (res.data as BackendExamItem[]).map((de) => ({
         id: String(de.id),
         title: de.tieuDe,
+        maHash: de.maHash,
+        batDau: de.batDau,
+        ketThuc: de.ketThuc,
         durationSeconds: (de.thoiGian ?? 0) * 60,
         questions: [],
         maLopGiao: [classId],
@@ -295,9 +305,12 @@ const examAPI = {
 
       return {
         id: String(data.deId),
+        maHash: (data as any).maHash,
         nguoiTaoId: String(data.nguoiTaoId),
         nguoiTaoTen: data.nguoiTaoTen,
         title: data.tieuDe,
+        batDau: data.batDau,
+        ketThuc: data.ketThuc,
         durationSeconds: (data.thoiGian ?? 0) * 60,
         questions: (data.cauHois ?? []).map((question) => ({
           id: String(question.cauHoiId),

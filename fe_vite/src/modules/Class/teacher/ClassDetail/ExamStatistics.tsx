@@ -20,7 +20,7 @@ import {
   Filler,
   ArcElement,
 } from "chart.js";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams} from "react-router-dom";
 import examAPI from "../../../../services/apis/examAPI";
 import { classAPI } from "../../../../services/apis/classAPI";
 
@@ -66,15 +66,18 @@ const ExamStatistics = () => {
         // if (!lopId) {
         //   lopId = localStorage.getItem("currentClassId") ?? "";
         // }
-        const lopId = classId;
+        let lopId = classId;
         // Nếu vẫn chưa có, thử lấy classId đầu tiên từ danh sách lớp
         if (!lopId) {
           try {
             const res = await classAPI.getAllByTeacher();
             const allClasses = res?.data || [];
             if (allClasses && allClasses.length > 0) {
-              lopId = allClasses[0].id?.toString();
-              localStorage.setItem("currentClassId", lopId);
+              const firstClassId = allClasses[0]?.id?.toString();
+              if (firstClassId) {
+                lopId = firstClassId;
+                localStorage.setItem("currentClassId", firstClassId);
+              }
             }
           } catch (e) {
             // ignore
@@ -148,7 +151,7 @@ const ExamStatistics = () => {
   };
 
   const barData = {
-    labels: ["0-2", "2-4", "4-6", "6-8", "8-10", ">10"],
+    labels: ["0-2", "2-4", "4-6", "6-8", "8-10"],
     datasets: [
       {
         label: "Số lượng",
