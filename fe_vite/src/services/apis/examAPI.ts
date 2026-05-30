@@ -65,6 +65,7 @@ export interface KetQua {
   tongSoCau: number;
   thoiGianLamGiay: number;
   nhanXetHeThong: string;
+  nhanXetGiaoVien?: string; // ĐÃ THÊM MỚI Ở ĐÂY
   diemSo: number;
 }
 
@@ -128,6 +129,7 @@ interface BackendKetQuaResponse {
   tongSoCau: number;
   thoiGianLamGiay: number;
   nhanXetHeThong: string;
+  nhanXetGiaoVien?: string; // ĐÃ THÊM MỚI Ở ĐÂY
   diemSo: number;
 }
 
@@ -199,6 +201,7 @@ const mapBackendKetQua = (raw: BackendKetQuaResponse): KetQua => ({
   tongSoCau: raw.tongSoCau,
   thoiGianLamGiay: raw.thoiGianLamGiay,
   nhanXetHeThong: raw.nhanXetHeThong,
+  nhanXetGiaoVien: raw.nhanXetGiaoVien, // ĐÃ THÊM MỚI Ở ĐÂY
   diemSo: raw.diemSo,
 });
 
@@ -237,40 +240,6 @@ const examAPI = {
       return [];
     }
   },
-
-  // getExamListByClass: async (classId: string): Promise<ExamListItem[]> => {
-  //   try {
-  //     const classesResponse = await axiosInstance.get("/api/lop-hoc");
-  //     const classes = classesResponse.data as BackendClassItem[];
-  //     const classRow = classes.find((item) => item.maLop === classId);
-  //     if (!classRow) {
-  //       return [];
-  //     }
-
-  //     const deResponse = await axiosInstance.get(
-  //       `/api/de-thi/lop/${classRow.id}`,
-  //     );
-  //     const deList = deResponse.data as BackendExamItem[];
-
-  //     const exams = await Promise.all(
-  //       deList.map(async (deItem) => {
-  //         const detail = await examAPI.getExamById(String(deItem.id));
-  //         return {
-  //           id: String(deItem.id),
-  //           title: deItem.tieuDe,
-  //           durationSeconds: (deItem.thoiGian ?? 0) * 60,
-  //           questions: detail?.questions ?? [],
-  //           maLopGiao: [classId],
-  //         };
-  //       }),
-  //     );
-
-  //     return exams;
-  //   } catch (error) {
-  //     console.error("Error in getExamListByClass:", error);
-  //     return [];
-  //   }
-  // },
 
   getExamListByClass: async (classId: string): Promise<ExamListItem[]> => {
     const accessToken = localStorage.getItem("accessToken");
@@ -352,6 +321,7 @@ const examAPI = {
         tongSoCau: detail.cauHoiList.length,
         thoiGianLamGiay: 0,
         nhanXetHeThong: "",
+        nhanXetGiaoVien: "", // ĐÃ THÊM MỚI Ở ĐÂY
         diemSo: Number(detail.tongDiem ?? 0),
       };
     } catch (error) {
