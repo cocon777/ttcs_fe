@@ -19,6 +19,16 @@ const UserAPI = {
       return null;
     }
   },
+  searchTruong: async (keyword: string) => {
+    try {
+      const res = await axiosInstance.get(
+        `users/truong/search?keyword=${encodeURIComponent(keyword)}`,
+      );
+      return res;
+    } catch {
+      return null;
+    }
+  },
 };
 
 export default UserAPI;

@@ -122,7 +122,19 @@ const Login = () => {
         </div>
 
         {message && (
-          <div className="w-full text-left text-xs text-red-500">{message}</div>
+          <div
+            className="w-full
+      rounded-md
+      border
+      border-red-300
+      bg-red-50
+      px-3
+      py-2
+      text-sm
+      text-red-600"
+          >
+            {message}
+          </div>
         )}
 
         <button

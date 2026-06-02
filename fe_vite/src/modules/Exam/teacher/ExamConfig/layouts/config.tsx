@@ -19,7 +19,7 @@ const Config: React.FC<ConfigProp> = ({
   onToggleLop,
   handleChangeConfig,
 }) => {
-  const { tieuDe, thoiGian, khoiLopId, monHocId } = deConfig;
+  const { tieuDe, thoiGian, gioiHanNop, khoiLopId, monHocId } = deConfig;
 
   return (
     <div className="rounded-md bg-white px-5 py-6 text-gray-800 shadow dark:bg-darkmode-600 dark:text-slate-300">
@@ -59,6 +59,7 @@ const Config: React.FC<ConfigProp> = ({
                 />
               </label>
             </div>
+
             <div className="col-span-12">
               <input
                 type="text"
@@ -70,7 +71,38 @@ const Config: React.FC<ConfigProp> = ({
               />
             </div>
             <div className="col-span-12 mt-1 text-xs text-slate-500">
-              Nhập 0 để không giới hạn thời gian
+              Đơn vị thời gian : phút
+            </div>
+          </div>
+
+          <div className="grid grid-cols-12">
+            <div className="col-span-12">
+              <label
+                htmlFor="exam-duration"
+                className="mb-2 flex items-center gap-1 text-sm font-medium"
+              >
+                Giới hạn nộp (số lần)
+                <CircleAlert
+                  strokeWidth={1.5}
+                  className="size-4 text-gray-900 dark:text-slate-300"
+                />
+              </label>
+            </div>
+
+            <div className="col-span-12">
+              <input
+                type="text"
+                id="exam-submit-limit"
+                value={gioiHanNop ?? ""}
+                onChange={(e) =>
+                  handleChangeConfig("gioiHanNop", e.target.value)
+                }
+                placeholder="Nhập giới hạn nộp ..."
+                className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm dark:border-none dark:bg-darkmode-800"
+              />
+            </div>
+            <div className="col-span-12 mt-1 text-xs text-slate-500">
+              Nhập số lần học sinh có thể làm bài/nộp bài
             </div>
           </div>
 
@@ -113,10 +145,6 @@ const Config: React.FC<ConfigProp> = ({
                   Đặt lại
                 </div>
               </div>
-            </div>
-
-            <div className="col-span-12 mt-1 text-xs text-slate-500 dark:text-slate-400">
-              Bỏ trống nếu không muốn giới hạn thời gian.
             </div>
           </div>
 

@@ -54,13 +54,13 @@
 import StudentHomeRoutes from "./StudentHome/routes";
 import StudentClassRoutes from "../../modules/Class/student/routes";
 import StudentExamRoutes from "../../modules/Exam/student/routes";
-
 const StudentRoutes = {
   path: "student",
   children: [
     { ...StudentHomeRoutes },
     { ...StudentClassRoutes },
     { ...StudentExamRoutes },
+    
   ],
 };
 

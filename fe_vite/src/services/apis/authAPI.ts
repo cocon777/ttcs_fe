@@ -91,7 +91,7 @@ const AuthAPI = {
       return response;
     } catch (error) {
       console.log("Error in login of AuthAPI: ", error);
-      return null;
+      throw error;
     }
   },
 

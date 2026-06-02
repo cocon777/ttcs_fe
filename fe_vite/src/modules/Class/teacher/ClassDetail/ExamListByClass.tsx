@@ -3,14 +3,11 @@ import { Loader2 } from "lucide-react";
 import examAPI from "../../../../services/apis/examAPI";
 import { useNavigate } from "react-router-dom";
 
-interface ExamListByClassProps {
-  classId: number;
-}
+import type { ExamListByClassProps } from "./interface/interface";
 
 const ExamListByClass = ({ classId }: ExamListByClassProps) => {
   const [exams, setExams] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // Tải danh sách đề thi của lớp
@@ -29,7 +26,7 @@ const ExamListByClass = ({ classId }: ExamListByClassProps) => {
         arr = (res as any).data;
       setExams(arr);
     } catch (err) {
-      setError("Lỗi khi lấy danh sách đề thi!");
+      console.error("Lỗi khi lấy danh sách đề thi!", err);
     } finally {
       setLoading(false);
     }
@@ -39,8 +36,17 @@ const ExamListByClass = ({ classId }: ExamListByClassProps) => {
     loadExams();
   }, [loadExams]);
 
-  const handleBack = () => {
-    navigate(-1);
+  const formatDateTime = (value?: string | null) => {
+    if (!value) return "---";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "---";
+    return date.toLocaleString("vi-VN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
   };
 
   return (
@@ -111,9 +117,7 @@ const ExamListByClass = ({ classId }: ExamListByClassProps) => {
                         : "---"}
                   </td>
                   <td className="p-4 text-slate-500">
-                    {item.createdAt
-                      ? new Date(item.createdAt).toLocaleDateString("vi-VN")
-                      : "---"}
+                    {formatDateTime(item.batDau ?? item.createdAt)}
                   </td>
                 </tr>
               ))

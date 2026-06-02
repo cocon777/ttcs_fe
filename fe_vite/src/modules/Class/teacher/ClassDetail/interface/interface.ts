@@ -1,3 +1,7 @@
+export interface ExamListByClassProps {
+  classId: number;
+}
+
 export interface NewStudentClass {
   fullname: string;
   email: string;

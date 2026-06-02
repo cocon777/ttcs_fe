@@ -20,7 +20,7 @@ import {
   Filler,
   ArcElement,
 } from "chart.js";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import examAPI from "../../../../services/apis/examAPI";
 import { classAPI } from "../../../../services/apis/classAPI";
 
@@ -39,49 +39,40 @@ ChartJS.register(
   ArcElement,
 );
 
-// // Helper: lấy classId từ URL cha nếu có
-// function useClassIdFromUrl() {
-//   const location = useLocation();
-//   const params = new URLSearchParams(location.search);
-//   const classId = params.get("classId");
-//   return classId;
-// }
-
 const ExamStatistics = () => {
   const navigate = useNavigate();
-  const { id, classId } = useParams(); // id là examId (deId)
-  // const classId = useClassIdFromUrl();
+  const { id, classId } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<any>(null);
   const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
+  // State quản lý đóng/mở khối AI Tư vấn
+  const [showAdvice, setShowAdvice] = useState(true);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        // let lopId: string = classId ?? "";
-        // if (!lopId) {
-        //   lopId = localStorage.getItem("currentClassId") ?? "";
-        // }
-        const lopId = classId;
-        // Nếu vẫn chưa có, thử lấy classId đầu tiên từ danh sách lớp
+        let lopId = classId;
         if (!lopId) {
           try {
             const res = await classAPI.getAllByTeacher();
             const allClasses = res?.data || [];
             if (allClasses && allClasses.length > 0) {
-              lopId = allClasses[0].id?.toString();
-              localStorage.setItem("currentClassId", lopId);
+              const firstClassId = allClasses[0]?.id?.toString();
+              if (firstClassId) {
+                lopId = firstClassId;
+                localStorage.setItem("currentClassId", firstClassId);
+              }
             }
           } catch (e) {
             // ignore
           }
         }
 
-        // Ưu tiên lấy hocSinhLopId nếu có trong localStorage
         let hocSinhLopId = localStorage.getItem("currentHocSinhLopId");
         if (!id || (!lopId && !hocSinhLopId)) {
           setError(
@@ -90,18 +81,13 @@ const ExamStatistics = () => {
           setLoading(false);
           return;
         }
-        // Gọi API thống kê mới
+
         const thongKeRes = await examAPI.getThongKeKetQua({
           deId: Number(id),
           lopId: Number(lopId),
           hocSinhLopId: hocSinhLopId ? Number(hocSinhLopId) : undefined,
         });
 
-        console.log("thongKeRes:", JSON.stringify(thongKeRes, null, 2));
-        console.log("lopId gửi:", lopId, "| deId gửi:", id);
-        console.log("hocSinhLopId:", hocSinhLopId);
-
-        // Gộp tieuDe từ response vào stats để hiển thị đúng tên đề thi
         setStats({ ...thongKeRes.thongKe, tieuDe: thongKeRes.tieuDe });
       } catch (err: any) {
         setError("Lỗi khi lấy dữ liệu thống kê.");
@@ -148,7 +134,7 @@ const ExamStatistics = () => {
   };
 
   const barData = {
-    labels: ["0-2", "2-4", "4-6", "6-8", "8-10", ">10"],
+    labels: ["0-2", "2-4", "4-6", "6-8", "8-10"],
     datasets: [
       {
         label: "Số lượng",
@@ -171,22 +157,46 @@ const ExamStatistics = () => {
 
   return (
     <div className="p-4 md:p-8 bg-gradient-to-br from-indigo-50 to-white min-h-screen">
-      <div className="mb-4 flex items-center justify-between">
-        <span className="text-indigo-700 font-bold text-xl">
-          {stats.examTitle || stats.tieuDe || "Tên đề thi"}
+      <div className="mb-6 flex items-center justify-between">
+        <span className="text-indigo-700 font-bold text-2xl drop-shadow-sm">
+          {stats.examTitle || stats.tieuDe || "Thống kê bài thi"}
         </span>
         <button
-          className="ml-4 px-4 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded shadow"
+          className="ml-4 px-4 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold rounded-lg shadow transition-colors"
           onClick={() => navigate(-1)}
         >
           ← Quay lại
         </button>
       </div>
+
+      {/* KHỐI AI TƯ VẤN CHO GIÁO VIÊN */}
+      {(stats.teacherAdvice || stats.nhanXetHeThong) && (
+        <div className="mb-8 border border-amber-200 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 shadow-sm overflow-hidden">
+          <button
+            onClick={() => setShowAdvice(!showAdvice)}
+            className="w-full px-5 py-4 flex justify-between items-center font-bold text-amber-900 hover:bg-amber-100/50 transition-colors"
+          >
+            <span className="flex items-center gap-2 text-lg">
+              💡 <span>Hệ thống phân tích và Tư vấn giảng dạy</span>
+            </span>
+            <span className="text-xs bg-amber-200 text-amber-800 px-3 py-1 rounded-full">
+              {showAdvice ? "Thu gọn ▲" : "Xem chi tiết ▼"}
+            </span>
+          </button>
+
+          {showAdvice && (
+            <div className="p-6 border-t border-amber-200 text-amber-900 whitespace-pre-wrap leading-relaxed text-sm md:text-base font-medium">
+              {stats.teacherAdvice || stats.nhanXetHeThong}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Header Cards */}
       <StatisticsCards data={cardData} />
 
       {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
         <CompletionRateChart data={completionPieData} />
         <ScoreDistributionChart data={barData} />
         <HardestQuestionsChart data={hardestBarData} />
@@ -200,6 +210,7 @@ const ExamStatistics = () => {
           setModalOpen(true);
         }}
       />
+
       {/* Popup chi tiết câu hỏi */}
       <QuestionDetailModal
         open={modalOpen}
