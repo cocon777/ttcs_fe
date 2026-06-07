@@ -35,9 +35,8 @@ const formatDuration = (seconds: number) => {
     return `${hours} giờ ${minutes} phút`;
   }
 
-  if (minutes > 0)
-    return `${minutes} phút`;
-  
+  if (minutes > 0) return `${minutes} phút`;
+
   return `${secs} giây`;
 };
 

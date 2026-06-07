@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import examAPI from "../../../../services/apis/examAPI";
 import { useNavigate } from "react-router-dom";
+
 import type { ExamListByClassProps } from "./interface/interface";
 
 const ExamListByClass = ({ classId }: ExamListByClassProps) => {
@@ -34,7 +35,6 @@ const ExamListByClass = ({ classId }: ExamListByClassProps) => {
   useEffect(() => {
     loadExams();
   }, [loadExams]);
-
 
   const formatDateTime = (value?: string | null) => {
     if (!value) return "---";

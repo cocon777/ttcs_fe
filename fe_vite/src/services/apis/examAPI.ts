@@ -33,7 +33,7 @@ export interface ExamListItem {
   id: string;
   title: string;
   maHash?: string;
-  batDau? : string;
+  batDau?: string;
   ketThuc?: string;
   durationSeconds: number;
   questions: ExamQuestion[];
@@ -65,6 +65,7 @@ export interface KetQua {
   tongSoCau: number;
   thoiGianLamGiay: number;
   nhanXetHeThong: string;
+  nhanXetGiaoVien?: string;
   diemSo: number;
 }
 
@@ -89,6 +90,26 @@ export interface ChiTietKetQua {
   ketQuaId: number;
   tongDiem: number;
   cauHoiList: ChiTietCauHoi[];
+}
+
+export interface LichSuItem {
+  ketQuaId: number;
+  lanThu: number;
+  diemSo: number;
+  thoiGianLamGiay: number;
+  nhanXetHeThong: string;
+  nhanXetGiaoVien?: string;
+}
+
+export interface KetQuaInfo {
+  ketQuaId: number;
+  lanThu: number;
+  diemSo: number;
+  thoiGianLamGiay: number;
+  nhanXetHeThong: string;
+  nhanXetGiaoVien?: string;
+  de?: { id: number; tieuDe: string; thoiGian: number | null };
+  hocSinh?: { id: number; ten: string };
 }
 
 interface BackendExamItem {
@@ -128,6 +149,7 @@ interface BackendKetQuaResponse {
   tongSoCau: number;
   thoiGianLamGiay: number;
   nhanXetHeThong: string;
+  nhanXetGiaoVien?: string;
   diemSo: number;
 }
 
@@ -190,7 +212,6 @@ const getCachedKetQua = (ketQuaId: string): KetQua | null => {
 import moment from "moment";
 const toLocalDateTimeIso = (date: Date) =>
   moment(date).format("YYYY-MM-DDTHH:mm:ss");
-
 const mapBackendKetQua = (raw: BackendKetQuaResponse): KetQua => ({
   id: raw.ketQuaId,
   ketQuaId: raw.ketQuaId,
@@ -199,6 +220,7 @@ const mapBackendKetQua = (raw: BackendKetQuaResponse): KetQua => ({
   tongSoCau: raw.tongSoCau,
   thoiGianLamGiay: raw.thoiGianLamGiay,
   nhanXetHeThong: raw.nhanXetHeThong,
+  nhanXetGiaoVien: raw.nhanXetGiaoVien,
   diemSo: raw.diemSo,
 });
 
@@ -237,40 +259,6 @@ const examAPI = {
       return [];
     }
   },
-
-  // getExamListByClass: async (classId: string): Promise<ExamListItem[]> => {
-  //   try {
-  //     const classesResponse = await axiosInstance.get("/api/lop-hoc");
-  //     const classes = classesResponse.data as BackendClassItem[];
-  //     const classRow = classes.find((item) => item.maLop === classId);
-  //     if (!classRow) {
-  //       return [];
-  //     }
-
-  //     const deResponse = await axiosInstance.get(
-  //       `/api/de-thi/lop/${classRow.id}`,
-  //     );
-  //     const deList = deResponse.data as BackendExamItem[];
-
-  //     const exams = await Promise.all(
-  //       deList.map(async (deItem) => {
-  //         const detail = await examAPI.getExamById(String(deItem.id));
-  //         return {
-  //           id: String(deItem.id),
-  //           title: deItem.tieuDe,
-  //           durationSeconds: (deItem.thoiGian ?? 0) * 60,
-  //           questions: detail?.questions ?? [],
-  //           maLopGiao: [classId],
-  //         };
-  //       }),
-  //     );
-
-  //     return exams;
-  //   } catch (error) {
-  //     console.error("Error in getExamListByClass:", error);
-  //     return [];
-  //   }
-  // },
 
   getExamListByClass: async (classId: string): Promise<ExamListItem[]> => {
     const accessToken = localStorage.getItem("accessToken");
@@ -352,6 +340,7 @@ const examAPI = {
         tongSoCau: detail.cauHoiList.length,
         thoiGianLamGiay: 0,
         nhanXetHeThong: "",
+        nhanXetGiaoVien: "",
         diemSo: Number(detail.tongDiem ?? 0),
       };
     } catch (error) {
@@ -428,6 +417,33 @@ const examAPI = {
     } catch (error) {
       console.error("Error submitting exam:", error);
       throw error;
+    }
+  },
+
+  getLichSuLamBai: async (
+    hocSinhId: number,
+    deId: number,
+  ): Promise<LichSuItem[]> => {
+    try {
+      const res = await axiosInstance.get(
+        `/api/ket-qua/lich-su?hocSinhId=${hocSinhId}&deId=${deId}`,
+      );
+      return res.data as LichSuItem[];
+    } catch (error) {
+      console.error("Error in getLichSuLamBai:", error);
+      return [];
+    }
+  },
+
+  getKetQuaInfo: async (
+    ketQuaId: string | number,
+  ): Promise<KetQuaInfo | null> => {
+    try {
+      const res = await axiosInstance.get(`/api/ket-qua/${ketQuaId}/info`);
+      return res.data as KetQuaInfo;
+    } catch (error) {
+      console.error("Error in getKetQuaInfo:", error);
+      return null;
     }
   },
 };
