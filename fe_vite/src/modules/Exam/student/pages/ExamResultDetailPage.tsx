@@ -147,7 +147,7 @@ const ExamResultDetailPage = () => {
               }}
               className="mt-3 text-sm font-semibold text-blue-600 hover:text-blue-700"
             >
-              Quay lại danh sách đề của lớp
+              Quay lại trang chủ
             </button>
           </aside>
 

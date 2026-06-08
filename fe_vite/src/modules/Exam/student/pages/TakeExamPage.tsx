@@ -93,31 +93,52 @@ const TakeExamPage = () => {
     fetchStudentName();
   }, []);
 
-  useEffect(() => {
-    const fetchExam = async () => {
-      if (!examId) {
-        setError("Missing exam id");
-        setLoading(false);
-        return;
-      }
+// Cập nhật lại useEffect nạp dữ liệu thi của TakeExamPage
+useEffect(() => {
+  const fetchExamAndCheckLimit = async () => {
+    if (!examId) {
+      setError("Missing exam id");
+      setLoading(false);
+      return;
+    }
 
+    try {
       setLoading(true);
-      const data = await examAPI.getExamById(examId);
+      
+      // 1. Lấy thông tin user hiện tại trước để lấy ID học sinh
+      const userRes = await UserAPI.getInfo();
+      const studentId = userRes?.data?.id;
 
+      // 2. Tải thông tin đề thi
+      const data = await examAPI.getExamById(examId);
       if (!data) {
         setError("Không tải được đề thi. Hãy kiểm tra backend.");
         setLoading(false);
         return;
       }
 
+      if (studentId) {
+        const history = await examAPI.getLichSuLamBai(Number(studentId), Number(examId));
+        if (data.gioiHanNop !== null && data.gioiHanNop !== undefined && history.length >= data.gioiHanNop) {
+          setError(`Bạn đã hết lượt nộp bài cho đề thi này.`);
+          setLoading(false);
+          return;
+        }
+      }
+
       setExamData(data);
       setExamStartedAt(getOrCreateExamStartAt(examId));
       setError(null);
+    } catch (err) {
+      console.error(err);
+      setError("Đã xảy ra lỗi hệ thống trong quá trình xác thực phòng thi.");
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
-    fetchExam();
-  }, [examId]);
+  fetchExamAndCheckLimit();
+}, [examId]);
 
   const handleSelectOption = (questionId: string, optionId: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: optionId }));

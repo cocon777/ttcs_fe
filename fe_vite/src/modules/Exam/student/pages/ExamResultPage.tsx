@@ -45,6 +45,8 @@ const ExamResultPage = () => {
   const [result, setResult] = useState<KetQua | null>(null);
   const [studentName, setStudentName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isAssignedToClass, setIsAssignedToClass] = useState(false);
+  const [isAfterEnd, setIsAfterEnd] = useState(false);
 
   // 2 state để quản lý việc đóng/mở ô nhận xét
   const [isOpenSystemFB, setIsOpenSystemFB] = useState(false);
@@ -59,6 +61,30 @@ const ExamResultPage = () => {
 
       const data = await examAPI.getKetQuaById(ketQuaId);
       setResult(data);
+      // Determine whether the underlying exam was assigned to a class (phamViGiao === 'LOP')
+      try {
+        const info = await examAPI.getKetQuaInfo(ketQuaId);
+        const deId = info?.de?.id;
+        if (deId) {
+          const exam = await examAPI.getExamById(String(deId));
+          const assigned = exam?.phamViGiao === "LOP" || (exam?.maLopGiao?.length ?? 0) > 0;
+          setIsAssignedToClass(Boolean(assigned));
+          // determine whether current time is after exam end
+          if (exam?.ketThuc) {
+            const end = new Date(exam.ketThuc);
+            if (!Number.isNaN(end.getTime())) {
+              setIsAfterEnd(Date.now() > end.getTime());
+            } else {
+              setIsAfterEnd(true);
+            }
+          } else {
+            setIsAfterEnd(true);
+          }
+        }
+      } catch (err) {
+        // ignore and leave as false
+        console.error("Error fetching exam info:", err);
+      }
       setLoading(false);
     };
 
@@ -212,18 +238,22 @@ const ExamResultPage = () => {
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
-          <button
-            onClick={() =>
-              navigate(
-                classId
-                  ? `/student/results/${ketQuaId}/detail?classId=${encodeURIComponent(classId)}`
-                  : `/student/results/${ketQuaId}/detail`,
-              )
-            }
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-          >
-            Xem chi tiết bài làm
-          </button>
+          {!isAssignedToClass && isAfterEnd && (
+            <button
+              onClick={() =>
+                navigate(
+                  classId
+                    ? `/student/results/${ketQuaId}/detail?classId=${encodeURIComponent(
+                        classId,
+                      )}`
+                    : `/student/results/${ketQuaId}/detail`,
+                )
+              }
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            >
+              Xem chi tiết bài làm
+            </button>
+          )}
           <button
             onClick={() => navigate("/student")}
             className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"

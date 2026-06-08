@@ -70,6 +70,9 @@ const ClassExamCard = ({ exam, classId }: ClassExamCardProps) => {
   };
 
   const handleToggleAttemptDetail = async (ketQuaId: number) => {
+    // If this exam was assigned by teacher (maLopGiao === 'LOP') and it's before end, don't allow opening details
+    if (exam.phamViGiao === "LOP" && !isAfterEnd) return;
+
     if (expandedAttemptId === ketQuaId) {
       setExpandedAttemptId(null);
       return;
@@ -156,7 +159,9 @@ const ClassExamCard = ({ exam, classId }: ClassExamCardProps) => {
           )}
           <button
             onClick={handleOpenHistory}
-            className="inline-flex rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            disabled={!isAfterEnd}
+            title={!isAfterEnd ? "Lịch sử chỉ xem sau khi đề thi kết thúc" : undefined}
+            className={`inline-flex rounded-md border px-4 py-2 text-sm font-medium ${!isAfterEnd ? "border-slate-200 text-slate-400 cursor-not-allowed bg-slate-50" : "border-slate-300 text-slate-600 hover:bg-slate-50"}`}
           >
             📋 Lịch sử
           </button>
@@ -223,14 +228,30 @@ const ClassExamCard = ({ exam, classId }: ClassExamCardProps) => {
                               ⏱ {formatDuration(item.thoiGianLamGiay)}
                             </span>
                           </div>
-                          <button
-                            onClick={() =>
-                              handleToggleAttemptDetail(item.ketQuaId)
-                            }
-                            className="rounded-lg border border-blue-200 px-4 py-1.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
-                          >
-                            {isExpanded ? "Thu gọn ▲" : "Xem chi tiết ▼"}
-                          </button>
+                          {(() => {
+                            const isAssignedAndBeforeEnd =
+                              exam.phamViGiao === "LOP" && !isAfterEnd;
+                            return (
+                              <button
+                                onClick={() =>
+                                  handleToggleAttemptDetail(item.ketQuaId)
+                                }
+                                disabled={isAssignedAndBeforeEnd}
+                                title={
+                                  isAssignedAndBeforeEnd
+                                    ? "Chi tiết bị khóa cho đề do giáo viên giao đến khi đề kết thúc"
+                                    : undefined
+                                }
+                                className={`rounded-lg border px-4 py-1.5 text-sm font-semibold transition ${
+                                  isAssignedAndBeforeEnd
+                                    ? "border-slate-200 text-slate-400 cursor-not-allowed bg-slate-50"
+                                    : "border-blue-200 text-blue-600 hover:bg-blue-50"
+                                }`}
+                              >
+                                {isExpanded ? "Thu gọn ▲" : "Xem chi tiết ▼"}
+                              </button>
+                            );
+                          })()}
                         </div>
 
                         {/* Expanded */}
