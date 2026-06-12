@@ -1,5 +1,6 @@
 import React from "react";
 import Modal from "antd/es/modal/Modal";
+import renderContent from "../../../../../share/utils/renderContent";
 
 interface Answer {
   kyHieu: string;
@@ -27,7 +28,7 @@ const QuestionDetailModal: React.FC<QuestionDetailModalProps> = ({
     {question && (
       <div>
         <div className="mb-2 font-semibold">Nội dung câu hỏi:</div>
-        <div className="mb-4">{question.content}</div>
+        <div className="mb-4">{renderContent(question.content)}</div>
         {question.answers && question.answers.length > 0 && (
           <div>
             <div className="mb-2 font-semibold">Đáp án:</div>
@@ -37,7 +38,8 @@ const QuestionDetailModal: React.FC<QuestionDetailModalProps> = ({
                   key={idx}
                   className={ans.laDapAn ? "text-green-600 font-bold" : ""}
                 >
-                  <span className="mr-2">{ans.kyHieu}.</span> {ans.noiDung}
+                  <span className="mr-2">{ans.kyHieu}.</span>{" "}
+                  {renderContent(ans.noiDung)}
                   {ans.laDapAn && (
                     <span className="ml-2 text-green-600">(Đáp án đúng)</span>
                   )}

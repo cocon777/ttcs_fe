@@ -48,7 +48,7 @@ const ExamStatistics = () => {
   const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  // State quản lý đóng/mở khối AI Tư vấn
+  // State quản lý đóng/mở khối hệ thống Tư vấn
   const [showAdvice, setShowAdvice] = useState(true);
 
   useEffect(() => {
@@ -88,7 +88,11 @@ const ExamStatistics = () => {
           hocSinhLopId: hocSinhLopId ? Number(hocSinhLopId) : undefined,
         });
 
-        setStats({ ...thongKeRes.thongKe, tieuDe: thongKeRes.tieuDe });
+        setStats({
+          ...thongKeRes.thongKe,
+          tieuDe: thongKeRes.tieuDe,
+          teacherAdvice: thongKeRes.teacherAdvice,
+        });
       } catch (err: any) {
         setError("Lỗi khi lấy dữ liệu thống kê.");
       } finally {
@@ -169,29 +173,6 @@ const ExamStatistics = () => {
         </button>
       </div>
 
-      {/* KHỐI AI TƯ VẤN CHO GIÁO VIÊN */}
-      {(stats.teacherAdvice || stats.nhanXetHeThong) && (
-        <div className="mb-8 border border-amber-200 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 shadow-sm overflow-hidden">
-          <button
-            onClick={() => setShowAdvice(!showAdvice)}
-            className="w-full px-5 py-4 flex justify-between items-center font-bold text-amber-900 hover:bg-amber-100/50 transition-colors"
-          >
-            <span className="flex items-center gap-2 text-lg">
-              💡 <span>Hệ thống phân tích và Tư vấn giảng dạy</span>
-            </span>
-            <span className="text-xs bg-amber-200 text-amber-800 px-3 py-1 rounded-full">
-              {showAdvice ? "Thu gọn ▲" : "Xem chi tiết ▼"}
-            </span>
-          </button>
-
-          {showAdvice && (
-            <div className="p-6 border-t border-amber-200 text-amber-900 whitespace-pre-wrap leading-relaxed text-sm md:text-base font-medium">
-              {stats.teacherAdvice || stats.nhanXetHeThong}
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Header Cards */}
       <StatisticsCards data={cardData} />
 
@@ -217,6 +198,29 @@ const ExamStatistics = () => {
         onClose={() => setModalOpen(false)}
         question={selectedQuestion}
       />
+
+      {/* HỆ THÔNG TƯ VẤN CHO GIÁO VIÊN */}
+      {(stats.teacherAdvice || stats.nhanXetHeThong) && (
+        <div className="mb-8 border border-blue-200 rounded-xl bg-gradient-to-r from-blue-50 to-aqua-50 shadow-sm overflow-hidden">
+          <button
+            onClick={() => setShowAdvice(!showAdvice)}
+            className="w-full px-5 py-4 flex justify-between items-center font-bold text-blue-900 hover:bg-blue-100/50 transition-colors"
+          >
+            <span className="flex items-center gap-2 text-lg">
+              💡 <span>Hệ thống phân tích và Tư vấn giảng dạy</span>
+            </span>
+            <span className="text-xs bg-blue-200 text-blue-800 px-3 py-1 rounded-full">
+              {showAdvice ? "Thu gọn ▲" : "Xem chi tiết ▼"}
+            </span>
+          </button>
+
+          {showAdvice && (
+            <div className="p-6 border-t border-blue-200 text-blue-900 whitespace-pre-wrap leading-relaxed text-sm md:text-base font-medium">
+              {stats.teacherAdvice || stats.nhanXetHeThong}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

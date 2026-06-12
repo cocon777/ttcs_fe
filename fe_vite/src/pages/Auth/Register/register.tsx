@@ -4,6 +4,7 @@ import RoleTabs from "./rolesTab";
 import type { nguoiDungMoi } from "./interface";
 import { Link, useNavigate } from "react-router-dom";
 import AuthAPI from "../../../services/apis/authAPI";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ const Register = () => {
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Tạm comment để test API, bỏ comment khi hoàn thiện
+    // bỏ comment để dùng validate
     /*
     if (!validateForm()) {
       return;
@@ -86,6 +87,7 @@ const Register = () => {
 
       if (response && (response.status === 201 || response.status === 200)) {
         navigate("/auth/login");
+        toast.success("Đăng ký tài khoản mới thành công");
       } else {
         setErrors({
           general: "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin.",

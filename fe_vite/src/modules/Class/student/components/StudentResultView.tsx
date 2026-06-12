@@ -1,5 +1,13 @@
 // resultData được fetch từ API sau khi học sinh nộp bài hoặc xem lại lịch sử
-const StudentResultView = ({ resultData }) => {
+const StudentResultView = ({
+  resultData,
+}: {
+  resultData: {
+    totalScore: number;
+    systemFeedback: string;
+    teacherFeedback?: string | null;
+  } | null;
+}) => {
   if (!resultData) return <div>Đang tải dữ liệu...</div>;
 
   return (

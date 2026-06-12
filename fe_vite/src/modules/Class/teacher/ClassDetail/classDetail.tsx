@@ -1,20 +1,44 @@
-import { useState } from "react";
-import { CalendarCheck, Newspaper, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import {
+  CalendarCheck,
+  Newspaper,
+  User,
+  BookOpen,
+  GraduationCap,
+  Users,
+} from "lucide-react";
 import { useParams } from "react-router-dom";
 import StudentManagement from "./StudentManagement";
 import ExamListByClass from "./ExamListByClass";
 import QuanLyBaiGiang from "./QuanLyBaiGiang";
+import { classAPI } from "../../../../services/apis/classAPI";
+import type { StudentClass } from "../../../../services/apis/classAPI";
 
 const TABS = [
   { icon: User, label: "Danh sách học sinh", index: 0 },
   { icon: CalendarCheck, label: "Bài giảng", index: 1 },
-  { icon: Newspaper, label: "Đề thi", index: 2 },
+  { icon: Newspaper, label: "Danh sách đề thi", index: 2 },
 ];
 
 const ClassDetail = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const [classInfo, setClassInfo] = useState<StudentClass | null>(null);
   const { id } = useParams();
+
+  useEffect(() => {
+    const fetchClassInfo = async () => {
+      if (!id) return;
+
+      const lopHoc = await classAPI.getClassById(id);
+
+      if (lopHoc) {
+        setClassInfo(lopHoc);
+      }
+    };
+
+    fetchClassInfo();
+  }, [id]);
 
   const renderContent = () => {
     switch (selectedIndex) {
@@ -24,7 +48,6 @@ const ClassDetail = () => {
         ) : (
           <div>Không tìm thấy lớp</div>
         );
-
       case 1:
         return <QuanLyBaiGiang />;
       case 2:
@@ -43,8 +66,39 @@ const ClassDetail = () => {
       {/* Sidebar bên trái */}
       <div className="sticky top-0 col-span-2 h-[660px] border-r border-gray-300 dark:border-darkmode-400">
         <div className="pl-6 pr-3 pt-6">
-          <div className="mb-6 px-2 text-xs font-bold uppercase text-slate-400">
-            Menu quản lý
+          <div className="mb-6 px-2">
+            <h1 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+              {classInfo?.tenLop ?? "Đang tải..."}
+            </h1>
+
+            <div className="mt-2 flex flex-col gap-1 text-xs text-slate-500">
+              {/* <span>
+                <strong>Mã lớp: </strong>
+                {classInfo?.maLop ?? "—"}
+              </span> */}
+
+              <span>
+                <strong>Năm học: </strong>
+                {classInfo?.namHoc ?? "—"}
+              </span>
+
+              <div className="mt-3 space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <GraduationCap className="size-4 text-indigo-500" />
+                  <span>{classInfo?.khoiLop?.ten}</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm">
+                  <BookOpen className="size-4 text-cyan-500" />
+                  <span>{classInfo?.monHoc?.ten}</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm">
+                  <Users className="size-4 text-emerald-500" />
+                  <span>Sĩ số: {classInfo?.soLuongHS}</span>
+                </div>
+              </div>
+            </div>
           </div>
           {TABS.map((tab, index) => (
             <div

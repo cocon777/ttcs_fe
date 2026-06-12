@@ -27,7 +27,7 @@ const ExamInfor = () => {
     //   <ExamInfoArea de={de} setDe={setDe} />
     // </div>
     <div className="flex justify-center p-5">
-      <div className="w-full max-w-4xl ">
+      <div className="w-full max-w-2xl ">
         <ExamInfoArea de={de} setDe={setDe} />
       </div>
     </div>

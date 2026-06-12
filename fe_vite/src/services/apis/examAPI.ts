@@ -23,6 +23,8 @@ export interface ExamData {
   maHash?: string;
   batDau?: string;
   ketThuc?: string;
+  gioiHanNop: number | null;
+  phamViGiao?: "LOP" | "TU" | null;
   durationSeconds: number;
   questions: ExamQuestion[];
   maLopGiao?: string[];
@@ -36,8 +38,10 @@ export interface ExamListItem {
   batDau?: string;
   ketThuc?: string;
   durationSeconds: number;
+  gioiHanNop: number | null;
   questions: ExamQuestion[];
   maLopGiao?: string[];
+  phamViGiao?: "LOP" | "TU" | null;
 }
 
 export interface SubmitExamPayload {
@@ -119,6 +123,8 @@ interface BackendExamItem {
   thoiGian: number | null;
   batDau?: string;
   ketThuc?: string;
+  gioiHanNop?: number | null;
+  phamViGiao?: "LOP" | "TU" | null;
   createdAt?: string;
 }
 
@@ -130,6 +136,7 @@ interface BackendExamDetail {
   thoiGian: number | null;
   batDau?: string;
   ketThuc?: string;
+  gioiHanNop?: number | null;
   createdAt?: string;
   cauHois: Array<{
     cauHoiId: number;
@@ -275,8 +282,10 @@ const examAPI = {
         batDau: de.batDau,
         ketThuc: de.ketThuc,
         durationSeconds: (de.thoiGian ?? 0) * 60,
+        gioiHanNop: de.gioiHanNop ?? null,
         questions: [],
         maLopGiao: [classId],
+        phamViGiao: de.phamViGiao ?? null,
       }));
     } catch (error) {
       console.error("Error in getExamListByClass:", error);
@@ -299,6 +308,8 @@ const examAPI = {
         title: data.tieuDe,
         batDau: data.batDau,
         ketThuc: data.ketThuc,
+        gioiHanNop: data.gioiHanNop ?? null,
+        phamViGiao: (data as any).phamViGiao ?? null,
         durationSeconds: (data.thoiGian ?? 0) * 60,
         questions: (data.cauHois ?? []).map((question) => ({
           id: String(question.cauHoiId),

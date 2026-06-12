@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import examAPI from "../../../../services/apis/examAPI";
 import { Card, Button } from "antd";
-import { FileText } from "lucide-react";
+import { FileText, Settings } from "lucide-react";
 import { useState as useReactState } from "react";
 import ExamContentPopup from "./components/ExamContentPopup";
 import ExamStudentList from "./components/ExamStudentList";
@@ -29,8 +29,10 @@ const ExamDetailPage = () => {
     } else {
       try {
         const res = await examAPI.getExamById(examId);
+        console.log(JSON.stringify(res, null, 2));
         setExamContent(res);
         setIsOpenExamContent(true);
+        console.log(examContent?.questions?.[0]?.options);
       } catch {}
     }
   };
@@ -92,7 +94,7 @@ const ExamDetailPage = () => {
             Thời gian:{" "}
             {exam.durationSeconds ? `${exam.durationSeconds / 60} phút` : "-"}
           </div>
-          {/* Nội dung - Xem đề */}
+          {/* Nội dung - Xem đề + đến trang infor */}
           <div className="mt-4">
             <div className="text-sm font-semibold mb-1">Nội dung</div>
             <div
@@ -101,6 +103,18 @@ const ExamDetailPage = () => {
             >
               <FileText className="size-4" />
               <div className="text-sm font-medium underline">Xem đề</div>
+            </div>
+            <div
+              className="flex items-center gap-2 text-blue-800 hover:cursor-pointer hover:opacity-80 dark:text-blue-700"
+              onClick={handleOpenExamContent}
+            >
+              <Settings className="size-4" />
+              <div
+                onClick={() => navigate(`/teacher/exam/exam-infor/${examId}`)}
+                className="text-sm font-medium underline"
+              >
+                Cấu hình đề
+              </div>
             </div>
           </div>
           <div className="mt-4 flex flex-col gap-2">

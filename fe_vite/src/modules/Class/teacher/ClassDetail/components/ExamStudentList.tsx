@@ -2,12 +2,12 @@ import { useState } from "react";
 import type { Student } from "../../../../../share/interfaces/student.interface";
 import examAPI from "../../../../../services/apis/examAPI";
 import type {
-  KetQua,
   KetQuaInfo,
   ChiTietKetQua,
 } from "../../../../../services/apis/examAPI";
 import axiosInstance from "../../../../../services/axiosInstance";
 import renderContent from "../../../../../share/utils/renderContent";
+import toast from "react-hot-toast";
 
 const formatDuration = (seconds: number | string) => {
   const sec =
@@ -31,15 +31,7 @@ const formatDuration = (seconds: number | string) => {
 };
 
 const ExamStudentList = ({ students }: { students: Student[] }) => {
-  // ===== State: Popup Nhận xét (giữ nguyên) =====
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-  const [ketQuaDetail, setKetQuaDetail] = useState<KetQua | null>(null);
-  const [teacherFeedback, setTeacherFeedback] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-
-  // ===== State: Popup Xem chi tiết (mới) =====
+  // State: Popup Xem chi tiết 
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [detailStudent, setDetailStudent] = useState<Student | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -50,44 +42,7 @@ const ExamStudentList = ({ students }: { students: Student[] }) => {
   const [detailTeacherFeedback, setDetailTeacherFeedback] = useState("");
   const [isSavingDetail, setIsSavingDetail] = useState(false);
 
-  // ===== Handler: Nhận xét (giữ nguyên) =====
-  const handleOpenFeedback = async (student: Student) => {
-    setSelectedStudent(student);
-    setIsOpen(true);
-    setIsLoading(true);
-    setTeacherFeedback("");
-    try {
-      const data = await examAPI.getKetQuaById(student.id.toString());
-      if (data) {
-        setKetQuaDetail(data);
-        setTeacherFeedback(data.nhanXetGiaoVien || "");
-      }
-    } catch (error) {
-      console.error("Lỗi lấy dữ liệu:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSaveFeedback = async () => {
-    if (!selectedStudent) return;
-    setIsSaving(true);
-    try {
-      await axiosInstance.put(
-        `/api/ket-qua/${selectedStudent.id}/giao-vien-nhan-xet`,
-        { nhanXetGiaoVien: teacherFeedback },
-      );
-      alert("Đã lưu nhận xét giáo viên thành công!");
-      setIsOpen(false);
-    } catch (error) {
-      console.error(error);
-      alert("Lỗi khi lưu nhận xét.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // ===== Handler: Xem chi tiết (mới) =====
+  //  Handler: Xem chi tiết
   const handleOpenDetail = async (student: Student) => {
     setDetailStudent(student);
     setIsDetailOpen(true);
@@ -118,14 +73,14 @@ const ExamStudentList = ({ students }: { students: Student[] }) => {
         `/api/ket-qua/${detailStudent.id}/giao-vien-nhan-xet`,
         { nhanXetGiaoVien: detailTeacherFeedback },
       );
-      alert("Đã lưu nhận xét thành công!");
+      toast.success("Đã lưu nhận xét thành công!");
       // Cập nhật lại state local
       setDetailInfo((prev) =>
         prev ? { ...prev, nhanXetGiaoVien: detailTeacherFeedback } : prev,
       );
     } catch (error) {
       console.error(error);
-      alert("Lỗi khi lưu nhận xét.");
+      toast.error("Lỗi khi lưu nhận xét.");
     } finally {
       setIsSavingDetail(false);
     }
@@ -134,7 +89,7 @@ const ExamStudentList = ({ students }: { students: Student[] }) => {
   return (
     <div className="mb-8 rounded-xl border border-indigo-100 bg-white p-6 shadow">
       <h3 className="mb-4 font-bold text-indigo-700">
-        Danh sách học sinh chi tiết
+        Danh sách học sinh đã làm
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-left text-sm">
@@ -166,12 +121,6 @@ const ExamStudentList = ({ students }: { students: Student[] }) => {
                 <td className="p-3 text-center">
                   <div className="flex justify-center gap-2">
                     <button
-                      onClick={() => handleOpenFeedback(student)}
-                      className="rounded-lg border border-indigo-200 px-3 py-1 text-xs font-semibold text-indigo-600 transition-all hover:border-indigo-400 hover:bg-indigo-50"
-                    >
-                      Nhận xét
-                    </button>
-                    <button
                       onClick={() => handleOpenDetail(student)}
                       className="rounded-lg border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-600 transition-all hover:border-emerald-400 hover:bg-emerald-50"
                     >
@@ -185,72 +134,7 @@ const ExamStudentList = ({ students }: { students: Student[] }) => {
         </table>
       </div>
 
-      {/* ============ POPUP NHẬN XÉT (giữ nguyên) ============ */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 p-4">
-              <h3 className="text-lg font-bold text-slate-800">
-                Đánh giá bài làm: {selectedStudent?.name}
-              </h3>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-xl font-bold leading-none text-slate-400 hover:text-red-500"
-              >
-                &times;
-              </button>
-            </div>
-            <div className="max-h-[70vh] overflow-y-auto p-5">
-              {isLoading ? (
-                <div className="py-6 text-center text-slate-500">
-                  Đang tải dữ liệu bài làm...
-                </div>
-              ) : (
-                <div className="space-y-5">
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-slate-700">
-                      🤖 Gợi ý từ Hệ thống:
-                    </label>
-                    <div className="max-h-48 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm leading-relaxed text-slate-600 whitespace-pre-wrap">
-                      {ketQuaDetail?.nhanXetHeThong ||
-                        "Hệ thống chưa có đánh giá."}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-blue-700">
-                      👩‍🏫 Nhận xét của Thầy/Cô:
-                    </label>
-                    <textarea
-                      className="w-full rounded-lg border border-blue-200 p-3 text-sm text-slate-700 outline-none transition-all focus:ring-2 focus:ring-blue-500"
-                      rows={5}
-                      placeholder="Nhập lời khuyên, động viên hoặc nhắc nhở..."
-                      value={teacherFeedback}
-                      onChange={(e) => setTeacherFeedback(e.target.value)}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 p-4">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium text-slate-600 transition-colors hover:bg-slate-50"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={handleSaveFeedback}
-                disabled={isLoading || isSaving}
-                className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
-              >
-                {isSaving ? "Đang lưu..." : "Lưu nhận xét"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ============ POPUP XEM CHI TIẾT (mới) ============ */}
+      {/* POPUP XEM CHI TIẾT  */}
       {isDetailOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 px-4 py-8 backdrop-blur-sm">
           <div className="w-full max-w-4xl rounded-xl bg-white shadow-2xl">
@@ -309,7 +193,7 @@ const ExamStudentList = ({ students }: { students: Student[] }) => {
                   </div>
                 )}
 
-                {/* Nhận xét hệ thống */}
+                {/* Nhận xét tự động của hệ thống */}
                 {detailInfo?.nhanXetHeThong && (
                   <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                     <p className="mb-2 text-sm font-bold text-slate-700">
@@ -321,7 +205,7 @@ const ExamStudentList = ({ students }: { students: Student[] }) => {
                   </div>
                 )}
 
-                {/* Nhận xét giáo viên (có thể chỉnh sửa) */}
+                {/* Nhận xét của giáo viên*/}
                 <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
                   <p className="mb-2 text-sm font-bold text-blue-700">
                     👩‍🏫 Nhận xét của Thầy/Cô:

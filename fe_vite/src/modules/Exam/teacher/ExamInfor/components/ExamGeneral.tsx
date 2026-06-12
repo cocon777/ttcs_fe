@@ -1,5 +1,10 @@
-import { Calendar, Copy, Share2, User } from "lucide-react";
-import CopyBox from "../../../../../share/components/CopyBox/CopyBox";
+import {
+  Calendar,
+  Clock,
+  BookOpen,
+  CheckCircle,
+  GraduationCap,
+} from "lucide-react";
 import { DateTimeFormat, isoDateUtil } from "../../../../../share/utils/date";
 import type { De } from "../../../../../share/interfaces/exam.interface";
 
@@ -7,48 +12,88 @@ interface ExamGeneralProps {
   de: De;
 }
 
-export const ExamGeneral: React.FC<ExamGeneralProps> = (props) => {
-  const { de } = props;
-
-  const nguoiTao = de.nguoiTao;
-  const { tieuDe, createdAt } = de;
-
-  const deURL = `http://localhost:3000/exam/${de?.maHash}`;
-
-  const handleCopyExamURL = () => {
-    navigator.clipboard.writeText(deURL);
-  };
+export const ExamGeneral: React.FC<ExamGeneralProps> = ({ de }) => {
+  const { createdAt, khoiLopTen, monHocTen } = de;
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-col items-start justify-between md:flex-row md:items-center">
-        <div className="text-lg font-semibold">{tieuDe}</div>
-
-        <div className="flex items-center gap-2">
-          <CopyBox copyText={deURL}>
-            <div
-              className="flex gap-2 rounded-md border border-blue-800 px-2 py-1.5 hover:cursor-pointer hover:bg-slate-100 dark:bg-darkmode-700 dark:hover:bg-darkmode-600"
-              onClick={handleCopyExamURL}
-            >
-              <Copy className="size-4 text-blue-700" />
-              <div className="text-xs font-semibold text-blue-900 dark:text-blue-700">
-                Copy link
-              </div>
-            </div>
-          </CopyBox>
-        </div>
-      </div>
-
       <div className="space-y-2">
         <div className="flex items-center gap-2">
+          <GraduationCap strokeWidth={1.5} className="size-4" />
+          <div className="flex items-center gap-2">
+            {khoiLopTen ? (
+              <span className="rounded-md bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-600">
+                {khoiLopTen}
+              </span>
+            ) : (
+              <span className="text-xs text-slate-400">Chưa có khối</span>
+            )}
+            {monHocTen && (
+              <span className="rounded-md bg-cyan-50 px-3 py-2 text-sm font-medium text-cyan-600">
+                {monHocTen}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
           <Calendar strokeWidth={1.5} className="size-4" />
-          <div className="text-sm">{`Ngày tạo: ${isoDateUtil.toDateAndTime(createdAt, DateTimeFormat.FULL_DATE_TIME_FORMAT)}`}</div>
+          <div className="text-sm">
+            <strong>Ngày tạo:</strong>{" "}
+            {isoDateUtil.toDateAndTime(
+              createdAt,
+              DateTimeFormat.FULL_DATE_TIME_FORMAT,
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <User strokeWidth={1.5} className="size-4" />
-          <div className="text-sm">{`Người tạo: ${nguoiTao?.id}`}</div>
+          <Clock strokeWidth={1.5} className="size-4" />
+          <div className="text-sm">
+            <strong>Thời gian làm bài:</strong> {de.thoiGian}{" "}
+            <strong>phút</strong>
+          </div>
         </div>
+
+        <div className="flex items-center gap-2">
+          <BookOpen strokeWidth={1.5} className="size-4" />
+          <div className="text-sm">
+            <strong>Số lớp được giao:</strong> {de.cacLopDaGiao?.length ?? 0}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <CheckCircle strokeWidth={1.5} className="size-4" />
+          <div className="text-sm">
+            <strong>Trạng thái:</strong>{" "}
+            {de.daXuatBan ? "Đã xuất bản" : "Chưa xuất bản"}
+          </div>
+        </div>
+
+        {de.batDau && (
+          <div className="flex items-center gap-2">
+            <Calendar strokeWidth={1.5} className="size-4" />
+            <div className="text-sm">
+              <strong>Bắt đầu:</strong>{" "}
+              {isoDateUtil.toDateAndTime(
+                de.batDau,
+                DateTimeFormat.FULL_DATE_TIME_FORMAT,
+              )}
+            </div>
+          </div>
+        )}
+
+        {de.ketThuc && (
+          <div className="flex items-center gap-2">
+            <Calendar strokeWidth={1.5} className="size-4" />
+            <div className="text-sm">
+              <strong>Kết thúc:</strong>{" "}
+              {isoDateUtil.toDateAndTime(
+                de.ketThuc,
+                DateTimeFormat.FULL_DATE_TIME_FORMAT,
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

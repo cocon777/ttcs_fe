@@ -1,16 +1,35 @@
-import { useEffect, useState } from "react";
-import { ChevronsDownUp, Search, Loader2, BookOpen } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronsDownUp, Search, Trash2 } from "lucide-react";
 import { classAPI } from "../../../../../services/apis/classAPI";
-import { useNavigate } from "react-router";
+import { CategoryForm } from "../../../../../share/components/CategoryForm/categoryForm";
+import ClassBox from "../components/classBox";
+import toast from "react-hot-toast";
 
 const ClassList = () => {
-  const [classes, setClasses] = useState<any[]>([]); // Danh sách gốc từ Backend
-  const [filteredClasses, setFilteredClasses] = useState<any[]>([]); // Danh sách sau khi lọc tìm kiếm
+  const [classes, setClasses] = useState<any[]>([]);
+  const [filteredClasses, setFilteredClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
 
-  // 1. Hàm lấy dữ liệu từ Backend
+  // dropdown
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // modal sửa
+  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editValues, setEditValues] = useState({
+    tenLop: "",
+    maLop: "",
+    namHoc: "",
+    khoiLopId: -1,
+    monHocId: -1,
+  });
+  const [saving, setSaving] = useState(false);
+
+  // modal xoá
+  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
   const fetchClasses = async () => {
     try {
       setLoading(true);
@@ -26,18 +45,84 @@ const ClassList = () => {
     }
   };
 
-  // 2. Tự động gọi khi load trang
   useEffect(() => {
     fetchClasses();
   }, []);
 
-  // 3. Logic tìm kiếm khi gõ vào ô input
   useEffect(() => {
     const filtered = classes.filter((item) =>
       item.tenLop?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredClasses(filtered);
   }, [searchTerm, classes]);
+
+  // Đóng menu khi click ra ngoài
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenuId(null);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // Sửa
+  const openEdit = (item: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOpenMenuId(null);
+    setEditTarget(item);
+    setEditValues({
+      tenLop: item.tenLop ?? "",
+      maLop: item.maLop ?? "",
+      namHoc: item.namHoc ?? "",
+      khoiLopId: item.khoiLop?.id ?? -1,
+      monHocId: item.monHoc?.id ?? -1,
+    });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editTarget) return;
+    setSaving(true);
+    try {
+      await classAPI.updateClass(editTarget.id, {
+        tenLop: editValues.tenLop,
+        maLop: editValues.maLop,
+        namHoc: editValues.namHoc,
+        khoiLopId: editValues.khoiLopId === -1 ? null : editValues.khoiLopId,
+        monHocId: editValues.monHocId === -1 ? null : editValues.monHocId,
+      });
+      setEditTarget(null);
+      toast.success("Sửa lớp thành công");
+      fetchClasses();
+    } catch (err) {
+      alert("Lỗi khi cập nhật lớp!");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // --- Xoá ---
+  const openDelete = (item: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOpenMenuId(null);
+    setDeleteTarget(item);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await classAPI.deleteClass(deleteTarget.id);
+      setDeleteTarget(null);
+      toast.success("Xóa lớp thành công");
+      fetchClasses();
+    } catch (err) {
+      alert("Lỗi khi xóa lớp!");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -62,60 +147,126 @@ const ClassList = () => {
           </button>
         </div>
       </div>
+      <ClassBox
+        loading={loading}
+        classes={filteredClasses}
+        openMenuId={openMenuId}
+        setOpenMenuId={setOpenMenuId}
+        openEdit={openEdit}
+        openDelete={openDelete}
+        menuRef={menuRef}
+      />
+      {editTarget && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => setEditTarget(null)}
+        >
+          <div
+            className="w-[520px] rounded-md bg-white shadow dark:bg-darkmode-600 dark:text-slate-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="border-b border-gray-200 p-3 text-sm font-semibold dark:border-darkmode-400">
+              Sửa lớp học
+            </div>
 
-      {/* Danh sách lớp học */}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-16 text-slate-400">
-          <Loader2 className="mb-2 animate-spin" />
-          <p className="text-sm">Đang tải danh sách lớp...</p>
+            <div className="space-y-3 px-5 py-4">
+              <div className="space-y-1">
+                <label className="text-sm">Tên lớp</label>
+                <input
+                  type="text"
+                  value={editValues.tenLop}
+                  onChange={(e) =>
+                    setEditValues((v) => ({ ...v, tenLop: e.target.value }))
+                  }
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-none dark:bg-darkmode-800"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-sm">Năm học</label>
+                <input
+                  type="text"
+                  value={editValues.namHoc}
+                  onChange={(e) =>
+                    setEditValues((v) => ({ ...v, namHoc: e.target.value }))
+                  }
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-none dark:bg-darkmode-800"
+                />
+              </div>
+
+              <CategoryForm
+                khoiLopId={editValues.khoiLopId}
+                monHocId={editValues.monHocId}
+                handleChangeConfig={(name, value) =>
+                  setEditValues((v) => ({ ...v, [name]: value }))
+                }
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 p-3">
+              <button
+                onClick={() => setEditTarget(null)}
+                className="rounded-md bg-gray-100 px-6 py-2 text-sm text-gray-600 hover:bg-gray-200"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                disabled={saving || !editValues.tenLop}
+                className="rounded-md bg-blue-700 px-6 py-2 text-sm font-semibold text-white hover:bg-blue-600 disabled:opacity-50"
+              >
+                {saving ? "Đang lưu..." : "Lưu"}
+              </button>
+            </div>
+          </div>
         </div>
-      ) : filteredClasses.length > 0 ? (
-        <div className="grid grid-cols-4 gap-4">
-          {filteredClasses.map((item) => (
-            <div
-              key={item.id}
-              onClick={() =>
-                navigate(`/teacher/class/classroom-detail/${item.id}`)
-              }
-              className="group flex flex-row cursor-pointer flex-col gap-3 rounded-xl border border-transparent bg-white p-4 shadow-sm transition-all hover:border-blue-400 hover:shadow-md dark:bg-darkmode-600"
-            >
-              {/* Header card */}
-              <div className="flex items-start justify-between">
-                <div className="rounded-lg bg-blue-50 p-2.5 dark:bg-blue-900/30">
-                  <BookOpen className="size-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-400 dark:bg-darkmode-400 dark:text-slate-400">
-                  #{item.maLop}
-                </span>
-              </div>
+      )}
 
-              {/* Dòng 1: Tên lớp + Năm học */}
+      {/* Xác nhận xóa*/}
+      {deleteTarget && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => setDeleteTarget(null)}
+        >
+          <div
+            className="w-[420px] rounded-md bg-white p-6 shadow dark:bg-darkmode-600 dark:text-slate-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+                <Trash2 className="size-5 text-red-600" />
+              </div>
               <div>
-                <h3 className="font-bold text-slate-800 group-hover:text-blue-600 dark:text-slate-200 dark:group-hover:text-blue-400">
-                  {item.tenLop}
-                </h3>
-                <p className="mt-0.5 text-xs text-slate-400">{item.namHoc}</p>
-              </div>
-
-              {/* Divider */}
-              <div className="border-t border-slate-100 dark:border-darkmode-400" />
-
-              {/* Dòng 2: Khối + Môn học */}
-              <div className="flex items-center gap-2">
-                <span className="rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
-                  {item.khoiLop?.ten ?? "—"}
-                </span>
-                <span className="rounded-md bg-cyan-50 px-2 py-1 text-xs font-medium text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400">
-                  {item.monHoc?.ten ?? "—"}
-                </span>
+                <p className="font-semibold text-slate-800 dark:text-slate-200">
+                  Xóa lớp học
+                </p>
+                <p className="text-sm text-slate-500">
+                  Hành động này không thể hoàn tác
+                </p>
               </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white py-16 text-center dark:border-darkmode-400 dark:bg-darkmode-600">
-          <BookOpen className="mx-auto mb-2 size-8 text-slate-300" />
-          <p className="text-sm text-slate-400">Không tìm thấy lớp học nào.</p>
+
+            <p className="mb-5 rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">
+              Bạn chắc chắn muốn xóa lớp <strong>{deleteTarget.tenLop}</strong>?
+              Toàn bộ học sinh, kết quả, bài giảng liên quan sẽ bị xóa theo.
+            </p>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="rounded-md border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={deleting}
+                className="rounded-md bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                {deleting ? "Đang xóa..." : "Xóa"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

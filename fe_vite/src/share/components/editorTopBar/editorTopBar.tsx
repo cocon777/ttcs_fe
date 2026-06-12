@@ -1,14 +1,11 @@
 import { useState, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Menu from "../Menu/menu";
 import convertToJSON from "../../../modules/Exam/teacher/Editor/utils/formatExam";
 import type { NoiDungDe } from "../../../modules/Exam/teacher/Editor/utils/formatExam";
-// [THÊM] Import ExamAPI để gọi tạo đề trực tiếp (lấy từ CreateExam)
 import CreateExamAPI from "../../../services/apis/createExamAPI";
-
+import toast from "react-hot-toast";
 const EDITOR_PATH = "/teacher/exam/editor";
-// [XÓA] Không còn dùng CREATE_PATH để navigate sang trang CreateExam nữa
-// const CREATE_PATH = "/teacher/exam/editor/create";
 
 interface FormErrors {
   tieuDe?: string;
@@ -18,13 +15,16 @@ interface FormErrors {
 const EditorTopBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
 
-  const [tieuDe, setExamName] = useState("");
+  // Chế độ sửa khi có ?deId=...
+  const editDeId = searchParams.get("deId");
+  const editTieuDeInit = searchParams.get("tieuDe") ?? "";
+  const isEditMode = Boolean(editDeId);
+
+  const [tieuDe, setExamName] = useState(editTieuDeInit);
   const [errors, setErrors] = useState<FormErrors>({});
-  // [THÊM] Trạng thái loading khi đang gọi API tạo đề
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // const examJSON = convertToJSON(localStorage.getItem("noiDungDe") || "");
 
   const validateExam = useCallback(
     (noiDungDe: NoiDungDe): string | undefined => {
@@ -61,50 +61,68 @@ const EditorTopBar = () => {
   };
 
   const handleCancel = () => {
-    setExamName("");
-    setErrors({});
+    if (isEditMode) {
+      navigate(-1);
+    } else {
+      setExamName("");
+      setErrors({});
+    }
   };
 
-  // [SỬA] handleContinue → async, gọi ExamAPI.create trực tiếp thay vì navigate sang CreateExam
-  const handleContinue = useCallback(async () => {
+  const getNoiDungDe = (): NoiDungDe => {
+    const storedJson = localStorage.getItem("exam_json");
+    return storedJson
+      ? (JSON.parse(storedJson) as NoiDungDe)
+      : convertToJSON(localStorage.getItem("exam") || "");
+  };
+
+  const validate = (): { noiDungDe: NoiDungDe; errors: FormErrors } | null => {
     const newErrors: FormErrors = {};
 
     if (!tieuDe.trim()) {
       newErrors.tieuDe = "Vui lòng nhập tên bài thi!";
     }
 
-    // [SỬA] Đọc examJSON từ localStorage tại thời điểm submit
-    // const currentExamJSON = convertToJSON(localStorage.getItem("exam") || "");
-    const storedJson = localStorage.getItem("exam_json");
-    const currentExamJSON = storedJson
-      ? (JSON.parse(storedJson) as NoiDungDe)
-      : convertToJSON(localStorage.getItem("exam") || "");
-
-    if (currentExamJSON) {
-      const examError = validateExam(currentExamJSON);
-      if (examError) newErrors.noiDungDe = examError;
-    }
+    const noiDungDe = getNoiDungDe();
+    const examError = validateExam(noiDungDe);
+    if (examError) newErrors.noiDungDe = examError;
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      return;
+      return null;
     }
+
+    return { noiDungDe, errors: {} };
+  };
+
+  // ── Tạo đề mới ──────────────────────────────────────────
+  const handleCreate = useCallback(async () => {
+    const result = validate();
+    if (!result) return;
 
     try {
       setIsSubmitting(true);
-
-      // [THÊM] Gọi API tạo đề trực tiếp — bỏ grade, subject, purpose như CreateExam cũ
       const response = await CreateExamAPI.create({
         tieuDe: tieuDe.trim(),
-        noiDungDe: currentExamJSON,
-        // [XÓA] gradeId, subjectId, purposeId, examDescribe không còn nữa
+        noiDungDe: result.noiDungDe,
       });
 
       if (response?.status === 201) {
+        console.log(response);
+        localStorage.removeItem("exam");
+        localStorage.removeItem("exam_json");
+
         const userString = localStorage.getItem("user");
         const user = userString ? JSON.parse(userString) : null;
+
         const isStudent = user?.role?.includes("HS") || user?.vaiTro === "HS";
-        navigate(isStudent ? "/student/my-exams" : "/teacher/exam/management");
+
+        navigate(
+          isStudent
+            ? "/student/my-exams"
+            : `/teacher/exam/exam-infor/${response.data.id}`,
+        );
+        toast.success("Tạo đề mới thành công");
       }
     } catch (error) {
       console.error("Lỗi khi tạo đề:", error);
@@ -115,9 +133,58 @@ const EditorTopBar = () => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [tieuDe, validateExam, navigate]);
+  }, [tieuDe, validate, navigate]);
 
-  // const openExamNameInput = location.pathname === EDITOR_PATH;
+  // ── Sửa đề: xóa cũ → tạo mới ────────────────────────────
+  const handleUpdate = useCallback(async () => {
+    if (!editDeId) return;
+
+    const result = validate();
+    if (!result) return;
+
+    if (!window.confirm("Xác nhận lưu thay đổi? Đề cũ sẽ bị thay thế.")) return;
+
+    try {
+      setIsSubmitting(true);
+
+      // 1. Xóa đề cũ
+      const removeRes = await CreateExamAPI.remove(editDeId);
+      if (removeRes?.status !== 200) {
+        throw new Error("Xóa đề cũ thất bại");
+      }
+
+      // 2. Tạo đề mới với nội dung đã sửa
+      const createRes = await CreateExamAPI.create({
+        tieuDe: tieuDe.trim(),
+        noiDungDe: result.noiDungDe,
+      });
+
+      if (createRes?.data?.id) {
+        localStorage.removeItem("exam");
+        localStorage.removeItem("exam_json");
+
+        const userString = localStorage.getItem("user");
+        const user = userString ? JSON.parse(userString) : null;
+
+        const isStudent = user?.role?.includes("HS") || user?.vaiTro === "HS";
+
+        navigate(
+          isStudent
+            ? "/student/my-exams"
+            : `/teacher/exam/exam-infor/${createRes.data.id}`,
+        );
+        toast.success("Sửa đề : Xóa cũ và tạo mới thành công");
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật đề:", error);
+      setErrors((prev) => ({
+        ...prev,
+        noiDungDe: "Cập nhật đề thất bại, vui lòng thử lại!",
+      }));
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [editDeId, tieuDe, validate, navigate]);
 
   const openExamNameInput =
     location.pathname === EDITOR_PATH ||
@@ -130,7 +197,7 @@ const EditorTopBar = () => {
           <div className="flex flex-1 flex-col">
             <input
               type="text"
-              placeholder="Nhập tên đề ..."
+              placeholder={isEditMode ? "Tiêu đề đề thi..." : "Nhập tên đề ..."}
               className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none dark:bg-darkmode-800 dark:text-slate-300 ${
                 errors.tieuDe
                   ? "border-red-500 focus:border-red-500"
@@ -152,21 +219,27 @@ const EditorTopBar = () => {
           <button
             type="button"
             onClick={handleCancel}
-            // [THÊM] Disable khi đang submit
             disabled={isSubmitting}
             className="rounded-md bg-gray-200 px-6 py-2.5 text-sm font-medium text-gray-600 shadow-sm transition-colors hover:bg-gray-300 disabled:opacity-50 dark:bg-darkmode-400 dark:text-slate-300 dark:hover:bg-darkmode-300"
           >
-            Hủy
+            {isEditMode ? "Quay lại" : "Hủy"}
           </button>
 
           <button
             type="button"
-            onClick={handleContinue}
-            // [THÊM] Disable + đổi text khi đang submit
+            onClick={isEditMode ? handleUpdate : handleCreate}
             disabled={isSubmitting}
-            className="rounded-md bg-blue-800 px-3 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+            className={`rounded-md px-3 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 ${
+              isEditMode
+                ? "bg-amber-500 hover:bg-amber-600 focus:ring-amber-500"
+                : "bg-blue-800 hover:bg-blue-700 focus:ring-blue-500"
+            }`}
           >
-            {isSubmitting ? "Đang tạo..." : "Tạo đề"}
+            {isSubmitting
+              ? "Đang xử lý..."
+              : isEditMode
+                ? "Lưu sửa đề"
+                : "Tạo đề"}
           </button>
         </div>
       )}

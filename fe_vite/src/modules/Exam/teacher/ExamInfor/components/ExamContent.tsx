@@ -4,10 +4,8 @@ import { useParams } from "react-router";
 import CreateExamAPI from "../../../../../services/apis/createExamAPI";
 import type { De } from "../../../../../share/interfaces/exam.interface";
 import renderContent from "../../../../../share/utils/renderContent";
-
-interface ExamContentProps {}
-
-export const ExamContent: React.FC<ExamContentProps> = (props) => {
+import SectionBox from "./SectionBox";
+export const ExamContent: React.FC = () => {
   const { deId } = useParams();
   const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
   const [de, setDe] = useState<De | null>(null);
@@ -28,11 +26,9 @@ export const ExamContent: React.FC<ExamContentProps> = (props) => {
   }, [deId]);
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <div className="text-sm font-semibold">Nội dung</div>
-      </div>
-
+    <SectionBox title="Nội dung">
+      {" "}
+      
       <div
         className="flex items-center gap-2 text-blue-800 hover:cursor-pointer hover:opacity-80 dark:text-blue-700"
         onClick={handleTogglePopup}
@@ -40,7 +36,6 @@ export const ExamContent: React.FC<ExamContentProps> = (props) => {
         <FileText className="size-4" />
         <div className="text-sm font-medium">Xem đề</div>
       </div>
-
       {isOpenPopup && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
@@ -96,6 +91,6 @@ export const ExamContent: React.FC<ExamContentProps> = (props) => {
           </div>
         </div>
       )}
-    </div>
+    </SectionBox>
   );
 };

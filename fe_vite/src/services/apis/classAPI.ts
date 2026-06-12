@@ -5,6 +5,7 @@ export interface StudentClass {
   tenLop: string;
   maLop: string;
   namHoc: string;
+  soLuongHS: number;
   khoiLop?: { id: number; ten: string };
   monHoc?: { id: number; ten: string };
   giaoVien?: { id: number; hoTen: string };
@@ -44,6 +45,37 @@ export const classAPI = {
 
     return await axiosInstance.get(`api/lop-hoc/hoc-sinh/${studentId}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
+    });
+  },
+
+  // sửa lớp
+  updateClass: async (
+    id: number,
+    data: {
+      tenLop: string;
+      maLop: string;
+      namHoc: string;
+      khoiLopId: number | null;
+      monHocId: number | null;
+    },
+  ) => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    return await axiosInstance.put(`api/lop-hoc/${id}`, data, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  },
+
+  // xóa lớp
+  deleteClass: async (id: number) => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    return await axiosInstance.delete(`api/lop-hoc/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
   },
 

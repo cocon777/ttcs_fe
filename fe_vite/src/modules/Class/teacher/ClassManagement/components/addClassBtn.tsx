@@ -2,7 +2,7 @@ import { PlusIcon } from "lucide-react";
 import { useState, Fragment } from "react";
 import { ClassroomAPI } from "../../../../../services/apis/classroomAPI";
 import { CategoryForm } from "../../../../../share/components/CategoryForm/categoryForm";
-
+import toast from "react-hot-toast";
 const AddClassBtn = () => {
   const [isOpenAdd, setOpenAdd] = useState<boolean>(false);
 
@@ -38,6 +38,7 @@ const AddClassBtn = () => {
     await handleSubmit();
 
     setOpenAdd(false);
+    toast.success("Tạo lớp mới thành công");
   };
 
   const isValid =
@@ -121,15 +122,6 @@ const AddClassBtn = () => {
                   Hủy
                 </div>
               </div>
-
-              <button
-                type="button"
-                className="rounded-md bg-blue-800 px-8 py-2.5 hover:cursor-pointer hover:bg-blue-700 disabled:cursor-default disabled:opacity-25 disabled:hover:bg-blue-800"
-                onClick={handleSubmit}
-                disabled={!isValid}
-              >
-                <div className="text-sm font-semibold text-white">Lưu</div>
-              </button>
 
               <button
                 type="submit"

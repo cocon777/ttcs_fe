@@ -10,6 +10,8 @@ export interface De {
   tieuDe: string;
   khoiLopId: number;
   monHocId: number;
+  khoiLopTen?: string | null;
+  monHocTen?: string | null;
   nguoiTao: NguoiDungRef;
   phamViGiao: "LOP" | "TU" | null;
   thoiGian: number;

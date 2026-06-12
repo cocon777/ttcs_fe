@@ -6,6 +6,22 @@ import axiosInstance from "../../services/axiosInstance";
 const STUDENT_CLASS_API_URL = `student-classes`;
 
 export const StudentClassroomAPI = {
+  // Tìm kiếm học sinh theo tên hoặc mã học sinh
+  searchHocSinh: async (keyword: string): Promise<AxiosResponse | null> => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axiosInstance.get(
+        `api/lop-hoc/hoc-sinh/search?keyword=${encodeURIComponent(keyword.trim())}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      return response;
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm học sinh:", error);
+      return null;
+    }
+  },
   // Thêm học sinh vào lớp bằng Mã học sinh
   addToClassByStudentCode: async (
     studentCode: string,
