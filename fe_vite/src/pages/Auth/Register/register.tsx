@@ -4,6 +4,7 @@ import RoleTabs from "./rolesTab";
 import type { nguoiDungMoi } from "./interface";
 import { Link, useNavigate } from "react-router-dom";
 import AuthAPI from "../../../services/apis/authAPI";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -59,35 +60,44 @@ const Register = () => {
 
   const handleChangeValues = (name: string, newValue: string) => {
     setValues((prevValues) => ({ ...prevValues, [name]: newValue }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
     }
   };
 
-  const handleRegister = async () => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // bỏ comment để dùng validate
+    /*
     if (!validateForm()) {
       return;
     }
+    */
 
     setIsLoading(true);
     try {
       const response = await AuthAPI.register(
         values.ten,
         values.tenDangNhap,
-        values.email,
         values.matKhau,
+        values.email,
         values.vaiTro,
       );
 
-      if (response?.status === 201) {
+      if (response && (response.status === 201 || response.status === 200)) {
         navigate("/auth/login");
+        toast.success("Đăng ký tài khoản mới thành công");
       } else {
-        setErrors({ general: "Đăng ký không thành công. Vui lòng thử lại." });
+        setErrors({
+          general: "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin.",
+        });
       }
     } catch (error) {
       console.error(error);
-      setErrors({ general: "Có lỗi xảy ra. Vui lòng thử lại sau." });
+      setErrors({
+        general: "Có lỗi xảy ra kết nối với máy chủ. Vui lòng thử lại sau.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -98,15 +108,16 @@ const Register = () => {
       <div className="mx-auto max-w-md">
         <form
           className="rounded-lg bg-white p-8 shadow-lg"
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={handleRegister}
         >
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-gray-900 ">
+            <h1 className="text-2xl font-bold text-gray-900">
               Đăng ký tài khoản
             </h1>
           </div>
           <h2 className="mb-2 text-center text-gray-700">Bạn là:</h2>
           <RoleTabs values={values} onChange={handleChangeValues} />
+
           <div className="mt-4 space-y-4">
             <div>
               <label
@@ -192,37 +203,36 @@ const Register = () => {
               >
                 Mật khẩu
               </label>
-
               <input
                 id="matKhau"
                 type="password"
                 className={`w-full rounded-lg border px-4 py-3 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.matKhau ? "border-red-600" : "border-gray-300"
                 }`}
-                placeholder="Nhập mật khẩu "
+                placeholder="Nhập mật khẩu"
                 value={values.matKhau}
                 name="matKhau"
                 onChange={(e) =>
                   handleChangeValues(e.target.name, e.target.value)
                 }
               />
-
               {errors.matKhau && (
                 <p className="mt-1 text-xs text-red-600">{errors.matKhau}</p>
               )}
             </div>
           </div>
+
           {errors.general && (
-            <div className="mt-4 rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
+            <div className="mt-4 rounded-lg bg-red-50 p-3">
               <p className="text-sm text-red-600">{errors.general}</p>
             </div>
           )}
+
           <div className="mt-6">
             <button
-              type="button"
-              onClick={handleRegister}
+              type="submit"
               disabled={isLoading}
-              className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-offset-darkmode-500"
+              className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading ? (
                 <>
@@ -234,13 +244,12 @@ const Register = () => {
               )}
             </button>
           </div>
+
           <div className="mt-6 text-center">
-            <span className="text-sm text-gray-600 dark:text-slate-400">
-              Đã có tài khoản?{" "}
-            </span>
+            <span className="text-sm text-gray-600">Đã có tài khoản? </span>
             <Link
               to="/auth/login"
-              className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
+              className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline"
             >
               Đăng nhập
             </Link>

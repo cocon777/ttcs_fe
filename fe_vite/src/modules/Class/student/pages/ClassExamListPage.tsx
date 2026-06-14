@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import classAPI from "../../../../services/apis/classAPI";
+import { classAPI } from "../../../../services/apis/classAPI";
 import examAPI from "../../../../services/apis/examAPI";
 import type { StudentClass } from "../../../../services/apis/classAPI";
 import type { ExamListItem } from "../../../../services/apis/examAPI";
@@ -65,7 +65,7 @@ const ClassExamListPage = () => {
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {examList.map((exam) => (
-              <ClassExamCard key={exam.id} exam={exam} />
+              <ClassExamCard key={exam.id} exam={exam} classId={classId} />
             ))}
           </div>
         )}

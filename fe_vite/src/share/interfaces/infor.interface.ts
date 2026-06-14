@@ -1,5 +1,22 @@
 import { GioiTinh } from "../constant/constant";
-import type { HocSinh, GiaoVien } from "./user.interface";
+import type { HocSinh } from "./user.interface";
+
+export interface Truong {
+  id: number;
+  ten: string;
+  tinh: string | null;
+  xa: string | null;
+}
+
+export interface KhoiLop {
+  id: number;
+  ten: string;
+}
+
+export interface MonHoc {
+  id: number;
+  ten: string;
+}
 
 export interface LopHoc {
   id: number;

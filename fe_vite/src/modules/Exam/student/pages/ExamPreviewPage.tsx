@@ -1,15 +1,51 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import examAPI from "../../../../services/apis/examAPI";
+import UserAPI from "../../../../services/apis/userAPI";
 import type { ExamData } from "../../../../services/apis/examAPI";
+
+const getExamStartStorageKey = (examId: string) =>
+  `student.exam.startAt.${examId}`;
 
 const ExamPreviewPage = () => {
   const { examId } = useParams<{ examId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const classId = searchParams.get("classId");
 
   const [exam, setExam] = useState<ExamData | null>(null);
   const [loading, setLoading] = useState(true);
   const [startingExam, setStartingExam] = useState(false);
+  const [studentName, setStudentName] = useState("");
+
+  //State kiểm tra giới hạn nộp bài
+  const [isOverLimit, setIsOverLimit] = useState(false);
+  const [attemptsCount, setAttemptsCount] = useState(0);
+
+  useEffect(() => {
+    const fetchStudentAndHistory = async () => {
+      try {
+        const response = await UserAPI.getInfo();
+        const student = response?.data;
+        if (student?.ten) {
+          setStudentName(student.ten);
+        }
+
+        // 🎯 BỔ SUNG: Check số lần đã làm thực tế từ lịch sử nộp bài
+        if (examId && student?.id) {
+          const history = await examAPI.getLichSuLamBai(
+            Number(student.id),
+            Number(examId),
+          );
+          setAttemptsCount(history.length);
+        }
+      } catch (err) {
+        console.error("Lỗi khi fetch thông tin thí sinh:", err);
+      }
+    };
+
+    fetchStudentAndHistory();
+  }, [examId]);
 
   useEffect(() => {
     const fetchExam = async () => {
@@ -27,12 +63,34 @@ const ExamPreviewPage = () => {
     fetchExam();
   }, [examId]);
 
+  // Tính toán điều kiện chặn dựa trên thông tin đề thi vừa cập nhật
+  useEffect(() => {
+    if (exam && exam.gioiHanNop !== null && exam.gioiHanNop !== undefined) {
+      if (attemptsCount >= exam.gioiHanNop) {
+        setIsOverLimit(true);
+      }
+    }
+  }, [exam, attemptsCount]);
   const handleStartExam = async () => {
-    if (!exam) return;
+    if (!exam || isOverLimit) return; // Chặn bấm nếu cố tình bypass UI
     setStartingExam(true);
+    localStorage.setItem(getExamStartStorageKey(exam.id), String(Date.now()));
     // Simulate a small delay for better UX
     await new Promise((resolve) => setTimeout(resolve, 500));
-    navigate(`/student/take-exam/${exam.id}`);
+    navigate(
+      classId
+        ? `/student/take-exam/${exam.id}?classId=${encodeURIComponent(classId)}`
+        : `/student/take-exam/${exam.id}`,
+    );
+  };
+
+  const backToExamList = () => {
+    if (classId) {
+      navigate(`/student/classroom/${classId}/exams`);
+      return;
+    }
+
+    navigate("/student");
   };
 
   if (loading) {
@@ -53,7 +111,7 @@ const ExamPreviewPage = () => {
             Không tìm thấy đề thi
           </p>
           <button
-            onClick={() => navigate("/student/exams")}
+            onClick={backToExamList}
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
           >
             Quay lại danh sách
@@ -72,13 +130,20 @@ const ExamPreviewPage = () => {
             {exam.title}
           </h1>
           <button
-            onClick={() => navigate("/student/exams")}
+            onClick={backToExamList}
             className="text-slate-400 hover:text-slate-600 text-lg"
           >
             ✕
           </button>
         </div>
 
+        {/* Banner cảnh báo nếu quá giới hạn làm bài */}
+        {isOverLimit && (
+          <div className="mb-6 rounded-lg bg-rose-50 border border-rose-200 p-4 text-sm text-rose-700 font-medium">
+            ⚠️ Bạn đã hoàn thành {attemptsCount} trên tổng số {exam.gioiHanNop}{" "}
+            lần làm bài cho phép. Hệ thống đã khóa quyền làm bài của đề thi này!
+          </div>
+        )}
         {/* Info Grid */}
         <div className="mb-8 space-y-4 rounded-lg bg-slate-50 p-6">
           <div className="flex justify-between py-2 border-b border-slate-200">
@@ -95,30 +160,47 @@ const ExamPreviewPage = () => {
             </span>
             <span className="text-slate-600">{exam.questions.length} câu</span>
           </div>
+          {/* Hiển thị lượt nộp cho học sinh */}
           <div className="flex justify-between py-2 border-b border-slate-200">
-            <span className="font-semibold text-slate-700">Loại câu hỏi:</span>
-            <span className="text-slate-600">Trắc nghiệm</span>
+            <span className="font-semibold text-slate-700">
+              Giới hạn số lần nộp:
+            </span>
+            <span className="text-slate-600">
+              {exam.gioiHanNop
+                ? `${attemptsCount} / ${exam.gioiHanNop} lần`
+                : "Không giới hạn"}
+            </span>
           </div>
           <div className="flex justify-between py-2">
             <span className="font-semibold text-slate-700">Thí sinh:</span>
-            <span className="text-slate-600">{exam.studentName}</span>
+            <span className="text-slate-600">
+              {studentName || "Không có dữ liệu"}
+            </span>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex gap-3">
           <button
-            onClick={() => navigate("/student/exams")}
+            onClick={backToExamList}
             className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
           >
             Quay lại
           </button>
           <button
             onClick={handleStartExam}
-            disabled={startingExam}
-            className="flex-1 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-70 transition"
+            disabled={startingExam || isOverLimit}
+            className={`flex-1 rounded-lg px-4 py-3 text-sm font-semibold text-white transition ${
+              isOverLimit
+                ? "bg-slate-300 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 disabled:opacity-70"
+            }`}
           >
-            {startingExam ? "Đang vào phòng thi..." : "Bắt đầu thi"}
+            {startingExam
+              ? "Đang vào phòng thi..."
+              : isOverLimit
+                ? "Bị khóa lượt nộp"
+                : "Bắt đầu thi"}
           </button>
         </div>
       </div>

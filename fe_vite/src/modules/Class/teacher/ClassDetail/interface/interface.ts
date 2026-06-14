@@ -1,3 +1,7 @@
+export interface ExamListByClassProps {
+  classId: number;
+}
+
 export interface NewStudentClass {
   fullname: string;
   email: string;
@@ -14,4 +18,24 @@ export interface NewStudent {
   studentPhone: string;
   studentEmail: string;
   classId: string;
+}
+
+export interface Option {
+  id: string;
+  label: string;
+  text: string;
+  laDapAn?: boolean;
+}
+
+export interface Question {
+  id: string;
+  questionNumber?: number;
+  text: string;
+  options: Option[];
+}
+
+export interface ExamContentPopupProps {
+  open: boolean;
+  onClose: () => void;
+  examContent: { questions?: Question[] } | null;
 }

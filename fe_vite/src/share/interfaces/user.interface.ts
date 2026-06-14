@@ -3,6 +3,7 @@ import { VaiTro, GioiTinh } from "../constant/constant";
 export interface NguoiDung {
   id: number;
   ten: string;
+  tenDangNhap: string;
   email: string;
   ngaySinh: string;
   soDienThoai: string;

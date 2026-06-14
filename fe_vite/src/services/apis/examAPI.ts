@@ -1,40 +1,56 @@
-import { axiosInstance } from "../axiosInstance";
+import axiosInstance from "../axiosInstance";
 
 export interface ExamOption {
   id: string;
   label: string;
   text: string;
+  laDapAn?: boolean;
 }
 
 export interface ExamQuestion {
   id: string;
   questionNumber?: number;
   text: string;
+  correctLabel?: string;
   options: ExamOption[];
 }
 
 export interface ExamData {
   id: string;
   title: string;
+  nguoiTaoId: string;
+  nguoiTaoTen: string;
+  maHash?: string;
+  batDau?: string;
+  ketThuc?: string;
+  gioiHanNop: number | null;
+  phamViGiao?: "LOP" | "TU" | null;
   durationSeconds: number;
-  studentName: string;
   questions: ExamQuestion[];
-  ma_lop_giao?: string[];
+  maLopGiao?: string[];
+  createdAt?: string;
 }
 
 export interface ExamListItem {
   id: string;
   title: string;
+  maHash?: string;
+  batDau?: string;
+  ketThuc?: string;
   durationSeconds: number;
-  studentName: string;
+  gioiHanNop: number | null;
   questions: ExamQuestion[];
-  ma_lop_giao?: string[];
+  maLopGiao?: string[];
+  phamViGiao?: "LOP" | "TU" | null;
 }
 
 export interface SubmitExamPayload {
   examId: string;
   answers: Record<string, string>;
   flaggedQuestionIds: string[];
+  questions?: ExamQuestion[];
+  durationSecondsUsed?: number;
+  startedAtMs?: number;
   selectedAnswerDetails?: Array<{
     questionId: string;
     optionId: string;
@@ -42,32 +58,205 @@ export interface SubmitExamPayload {
     optionText: string;
   }>;
   submittedAt?: string;
+  lopId?: number | null; // Thêm trường này để truyền lên backend
 }
 
-interface ClassRow {
+export interface KetQua {
   id: number;
-  ma_lop: string;
+  ketQuaId: number;
+  lanThu: number;
+  soCauDung: number;
+  tongSoCau: number;
+  thoiGianLamGiay: number;
+  nhanXetHeThong: string;
+  nhanXetGiaoVien?: string;
+  diemSo: number;
 }
 
-interface DeRow {
+export interface ChiTietLuaChon {
+  kyHieu: string;
+  noiDung: string;
+  laDapAn: boolean;
+}
+
+export interface ChiTietCauHoi {
+  cauHoiId: number;
+  noiDung: string;
+  thuTu: number;
+  diem: number;
+  dapAnDaChon: string;
+  dapAnDung: string;
+  luaChons: ChiTietLuaChon[];
+}
+
+export interface ChiTietKetQua {
   id: number;
-  ma_hash: string;
-  tieu_de: string;
-  thoi_gian: number | null;
-  da_xuat_ban: number;
+  ketQuaId: number;
+  tongDiem: number;
+  cauHoiList: ChiTietCauHoi[];
 }
 
-interface GiaoChoLopRow {
-  de_id: number;
-  lop_hoc_id: number;
+export interface LichSuItem {
+  ketQuaId: number;
+  lanThu: number;
+  diemSo: number;
+  thoiGianLamGiay: number;
+  nhanXetHeThong: string;
+  nhanXetGiaoVien?: string;
 }
 
-const extractQuestionNumericId = (questionId: string) => {
-  const numericPart = questionId.replace(/\D/g, "");
-  return Number(numericPart || 0);
+export interface KetQuaInfo {
+  ketQuaId: number;
+  lanThu: number;
+  diemSo: number;
+  thoiGianLamGiay: number;
+  nhanXetHeThong: string;
+  nhanXetGiaoVien?: string;
+  de?: { id: number; tieuDe: string; thoiGian: number | null };
+  hocSinh?: { id: number; ten: string };
+}
+
+interface BackendExamItem {
+  id: number;
+  maHash?: string;
+  tieuDe: string;
+  thoiGian: number | null;
+  batDau?: string;
+  ketThuc?: string;
+  gioiHanNop?: number | null;
+  phamViGiao?: "LOP" | "TU" | null;
+  createdAt?: string;
+}
+
+interface BackendExamDetail {
+  deId: number;
+  nguoiTaoId: string;
+  nguoiTaoTen: string;
+  tieuDe: string;
+  thoiGian: number | null;
+  batDau?: string;
+  ketThuc?: string;
+  gioiHanNop?: number | null;
+  createdAt?: string;
+  cauHois: Array<{
+    cauHoiId: number;
+    thuTu: number;
+    noiDung: string;
+    luaChons: Array<{
+      kyHieu: string;
+      noiDung: string;
+    }>;
+  }>;
+}
+
+interface BackendKetQuaResponse {
+  ketQuaId: number;
+  lanThu: number;
+  soCauDung: number;
+  tongSoCau: number;
+  thoiGianLamGiay: number;
+  nhanXetHeThong: string;
+  nhanXetGiaoVien?: string;
+  diemSo: number;
+}
+
+interface BackendChiTietKetQua {
+  ketQuaId: number;
+  tongDiem: number;
+  cauHoiList: ChiTietCauHoi[];
+}
+
+interface CurrentUserInfo {
+  id?: number;
+  hocSinh?: {
+    id?: number;
+  };
+}
+
+interface SubmitBackendPayload {
+  hocSinhId: number;
+  deId: number;
+  thoiGianBatDau: string;
+  cauTraLoi: Array<{
+    cauHoiId: number;
+    luaChon: string;
+  }>;
+  lopId?: number;
+}
+
+const localKetQuaCacheKey = "student.ketQua.cache";
+
+const readKetQuaCache = (): Record<string, KetQua> => {
+  try {
+    const raw = localStorage.getItem(localKetQuaCacheKey);
+    if (!raw) return {};
+    return JSON.parse(raw) as Record<string, KetQua>;
+  } catch (error) {
+    console.error("Error reading ket qua cache:", error);
+    return {};
+  }
 };
 
+const writeKetQuaCache = (cache: Record<string, KetQua>) => {
+  try {
+    localStorage.setItem(localKetQuaCacheKey, JSON.stringify(cache));
+  } catch (error) {
+    console.error("Error writing ket qua cache:", error);
+  }
+};
+
+const cacheKetQua = (ketQua: KetQua) => {
+  const cache = readKetQuaCache();
+  cache[String(ketQua.ketQuaId)] = ketQua;
+  writeKetQuaCache(cache);
+};
+
+const getCachedKetQua = (ketQuaId: string): KetQua | null => {
+  const cache = readKetQuaCache();
+  return cache[ketQuaId] ?? null;
+};
+
+import moment from "moment";
+const toLocalDateTimeIso = (date: Date) =>
+  moment(date).format("YYYY-MM-DDTHH:mm:ss");
+const mapBackendKetQua = (raw: BackendKetQuaResponse): KetQua => ({
+  id: raw.ketQuaId,
+  ketQuaId: raw.ketQuaId,
+  lanThu: raw.lanThu,
+  soCauDung: raw.soCauDung,
+  tongSoCau: raw.tongSoCau,
+  thoiGianLamGiay: raw.thoiGianLamGiay,
+  nhanXetHeThong: raw.nhanXetHeThong,
+  nhanXetGiaoVien: raw.nhanXetGiaoVien,
+  diemSo: raw.diemSo,
+});
+
 const examAPI = {
+  /**
+   * Lấy thống kê kết quả bài làm theo đề và lớp hoặc theo hocSinhLopId
+   * @param payload { deId: number; lopId: number; hocSinhLopId?: number }
+   */
+  getThongKeKetQua: async (payload: {
+    deId: number;
+    lopId: number;
+    hocSinhLopId?: number;
+  }) => {
+    const accessToken = localStorage.getItem("accessToken");
+    try {
+      const res = await axiosInstance.post("/api/ket-qua/thong-ke", payload, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      return res.data;
+    } catch (error) {
+      console.error("Error in getThongKeKetQua:", error);
+      return [];
+    }
+  },
+  /**
+   * Lấy danh sách kết quả làm bài của học sinh theo đề và lớp
+   * @param deId Mã đề thi
+   * @param lopId Mã lớp học
+   */
   getExamList: async (): Promise<ExamListItem[]> => {
     try {
       const response = await axiosInstance.get("/exams");
@@ -79,114 +268,193 @@ const examAPI = {
   },
 
   getExamListByClass: async (classId: string): Promise<ExamListItem[]> => {
+    const accessToken = localStorage.getItem("accessToken");
     try {
-      const [classesResponse, deResponse, giaoChoLopResponse] =
-        await Promise.all([
-          axiosInstance.get("/classes"),
-          axiosInstance.get("/de"),
-          axiosInstance.get("/giao_cho_lop"),
-        ]);
-
-      const classes = classesResponse.data as ClassRow[];
-      const deList = deResponse.data as DeRow[];
-      const giaoChoLopList = giaoChoLopResponse.data as GiaoChoLopRow[];
-
-      const classRow = classes.find((item) => item.ma_lop === classId);
-      if (!classRow) {
-        return [];
-      }
-
-      const assignedDeIds = new Set(
-        giaoChoLopList
-          .filter((item) => item.lop_hoc_id === classRow.id)
-          .map((item) => item.de_id),
-      );
-
-      const publishedDe = deList.filter(
-        (item) => item.da_xuat_ban === 1 && assignedDeIds.has(item.id),
-      );
-      const legacyExamList = await examAPI.getExamList();
-
-      return publishedDe.map((deItem) => {
-        const legacyExam = legacyExamList.find(
-          (item) => Number(item.id) === deItem.id,
-        );
-        return {
-          id: String(deItem.id),
-          title: deItem.tieu_de,
-          durationSeconds: (deItem.thoi_gian ?? 0) * 60,
-          studentName: legacyExam?.studentName ?? "Hoc sinh",
-          questions: legacyExam?.questions ?? [],
-          ma_lop_giao: [classId],
-        };
+      // classId ở đây là lopHocId (số), gọi thẳng không cần tìm qua maLop
+      const res = await axiosInstance.get(`api/de-thi/lop/${classId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
+
+      return (res.data as BackendExamItem[]).map((de) => ({
+        id: String(de.id),
+        title: de.tieuDe,
+        maHash: de.maHash,
+        batDau: de.batDau,
+        ketThuc: de.ketThuc,
+        durationSeconds: (de.thoiGian ?? 0) * 60,
+        gioiHanNop: de.gioiHanNop ?? null,
+        questions: [],
+        maLopGiao: [classId],
+        phamViGiao: de.phamViGiao ?? null,
+      }));
     } catch (error) {
-      console.error(
-        "Error in getExamListByClass, fallback to legacy field:",
-        error,
-      );
-      const legacyExamList = await examAPI.getExamList();
-      return legacyExamList.filter((exam) =>
-        exam.ma_lop_giao?.includes(classId),
-      );
+      console.error("Error in getExamListByClass:", error);
+      return [];
     }
   },
 
   getExamById: async (examId: string): Promise<ExamData | null> => {
     try {
-      const response = await axiosInstance.get(`/exams/${examId}`);
-      return response.data as ExamData;
+      const response = await axiosInstance.get(
+        `/api/de-thi/${examId}/chi-tiet`,
+      );
+      const data = response.data as BackendExamDetail;
+
+      return {
+        id: String(data.deId),
+        maHash: (data as any).maHash,
+        nguoiTaoId: String(data.nguoiTaoId),
+        nguoiTaoTen: data.nguoiTaoTen,
+        title: data.tieuDe,
+        batDau: data.batDau,
+        ketThuc: data.ketThuc,
+        gioiHanNop: data.gioiHanNop ?? null,
+        phamViGiao: (data as any).phamViGiao ?? null,
+        durationSeconds: (data.thoiGian ?? 0) * 60,
+        questions: (data.cauHois ?? []).map((question) => ({
+          id: String(question.cauHoiId),
+          questionNumber: question.thuTu,
+          text: question.noiDung,
+          options: (question.luaChons ?? []).map((option) => ({
+            id: option.kyHieu,
+            label: option.kyHieu,
+            text: option.noiDung,
+          })),
+        })),
+        createdAt: data.createdAt,
+      };
     } catch (error) {
       console.error("Error in getExamById:", error);
       return null;
     }
   },
 
+  getKetQuaById: async (ketQuaId: string): Promise<KetQua | null> => {
+    try {
+      const cached = getCachedKetQua(ketQuaId);
+      if (cached) {
+        return cached;
+      }
+
+      const detail = await examAPI.getChiTietKetQuaByKetQuaId(ketQuaId);
+      if (!detail) {
+        return null;
+      }
+
+      return {
+        id: Number(ketQuaId),
+        ketQuaId: Number(ketQuaId),
+        lanThu: 1,
+        soCauDung: detail.cauHoiList.filter(
+          (item) => item.dapAnDaChon && item.dapAnDaChon === item.dapAnDung,
+        ).length,
+        tongSoCau: detail.cauHoiList.length,
+        thoiGianLamGiay: 0,
+        nhanXetHeThong: "",
+        nhanXetGiaoVien: "",
+        diemSo: Number(detail.tongDiem ?? 0),
+      };
+    } catch (error) {
+      console.error("Error in getKetQuaById:", error);
+      return null;
+    }
+  },
+
+  getChiTietKetQuaByKetQuaId: async (
+    ketQuaId: string,
+  ): Promise<ChiTietKetQua | null> => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/ket-qua/${ketQuaId}/chi-tiet`,
+      );
+      const raw = response.data as BackendChiTietKetQua;
+      return {
+        id: raw.ketQuaId,
+        ketQuaId: raw.ketQuaId,
+        tongDiem: Number(raw.tongDiem ?? 0),
+        cauHoiList: raw.cauHoiList ?? [],
+      };
+    } catch (error) {
+      console.error("Error in getChiTietKetQuaByKetQuaId:", error);
+      return null;
+    }
+  },
+
   submitExam: async (payload: SubmitExamPayload) => {
-    const submittedAt = payload.submittedAt ?? new Date().toISOString();
+    const userInfoResponse = await axiosInstance.get("/users/me");
+    const userInfo = userInfoResponse.data as CurrentUserInfo;
+    const hocSinhId = userInfo.hocSinh?.id ?? userInfo.id;
+
+    if (!hocSinhId) {
+      throw new Error("Không xác định được học sinh hiện tại để nộp bài.");
+    }
+
+    const deId = Number(payload.examId);
+    if (!Number.isFinite(deId)) {
+      throw new Error("Mã đề thi không hợp lệ.");
+    }
+
+    const cauTraLoi = Object.entries(payload.answers)
+      .map(([questionId, optionId]) => ({
+        cauHoiId: Number(questionId),
+        luaChon: optionId,
+      }))
+      .filter((item) => Number.isFinite(item.cauHoiId));
+
+    const requestBody: SubmitBackendPayload = {
+      hocSinhId,
+      deId,
+      thoiGianBatDau: toLocalDateTimeIso(
+        new Date(
+          payload.startedAtMs ??
+            Date.now() - (payload.durationSecondsUsed ?? 0) * 1000,
+        ),
+      ),
+      cauTraLoi,
+    };
+
+    if (payload.lopId !== null) {
+      requestBody.lopId = payload.lopId;
+    }
 
     try {
-      const ketQuaResponse = await axiosInstance.post("/ket_qua", {
-        thoi_gian_bat_dau: submittedAt,
-        thoi_gian_nop: submittedAt,
-        diem_so: null,
-        nhan_xet_giao_vien: null,
-        nhan_xet_he_thong: null,
-        hoc_sinh_id: 3,
-        hoc_sinh_lop_id: null,
-        lan_thu: 1,
-        de_id: Number(payload.examId),
-      });
-
-      const ketQuaId = ketQuaResponse.data.id as number;
-      const details =
-        payload.selectedAnswerDetails ??
-        Object.entries(payload.answers).map(([questionId, optionId]) => ({
-          questionId,
-          optionId,
-          optionLabel: optionId,
-          optionText: optionId,
-        }));
-
-      await Promise.all(
-        details.map((detail) =>
-          axiosInstance.post("/chi_tiet_ket_qua", {
-            lua_chon_da_chon: detail.optionLabel,
-            diem_cau: 0,
-            ket_qua_id: ketQuaId,
-            cau_hoi_id: extractQuestionNumericId(detail.questionId),
-          }),
-        ),
+      const response = await axiosInstance.post(
+        "/api/ket-qua/submit",
+        requestBody,
       );
-
-      return ketQuaResponse.data;
+      const ketQua = mapBackendKetQua(response.data as BackendKetQuaResponse);
+      cacheKetQua(ketQua);
+      return ketQua;
     } catch (error) {
-      console.error(
-        "Error writing ket_qua/chi_tiet_ket_qua, fallback exam-submissions:",
-        error,
+      console.error("Error submitting exam:", error);
+      throw error;
+    }
+  },
+
+  getLichSuLamBai: async (
+    hocSinhId: number,
+    deId: number,
+  ): Promise<LichSuItem[]> => {
+    try {
+      const res = await axiosInstance.get(
+        `/api/ket-qua/lich-su?hocSinhId=${hocSinhId}&deId=${deId}`,
       );
-      const response = await axiosInstance.post("/exam-submissions", payload);
-      return response.data;
+      return res.data as LichSuItem[];
+    } catch (error) {
+      console.error("Error in getLichSuLamBai:", error);
+      return [];
+    }
+  },
+
+  getKetQuaInfo: async (
+    ketQuaId: string | number,
+  ): Promise<KetQuaInfo | null> => {
+    try {
+      const res = await axiosInstance.get(`/api/ket-qua/${ketQuaId}/info`);
+      return res.data as KetQuaInfo;
+    } catch (error) {
+      console.error("Error in getKetQuaInfo:", error);
+      return null;
     }
   },
 };

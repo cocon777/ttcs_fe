@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import type { NoiDungDe } from "../utils/formatExam";
+import renderContent from "../../../../../share/utils/renderContent";
 
 interface QuestionBoxProps {
   cauHoiKey: string;
@@ -44,7 +45,7 @@ const QuestionBox: React.FC<QuestionBoxProps> = (props) => {
           className="rounded-sm border border-gray-300 p-1 hover:cursor-pointer"
           onClick={handleGoToLine}
         >
-          <div className="text-sm">{noiDung}</div>
+          <div className="text-sm">{renderContent(noiDung)}</div>
         </div>
 
         {Object.keys(luaChons).map((kyHieu) => {
@@ -78,7 +79,7 @@ const QuestionBox: React.FC<QuestionBoxProps> = (props) => {
                     : "border-gray-300")
                 }
               >
-                <div className="text-sm">{noiDungLuaChon}</div>
+                <div className="text-sm">{renderContent(noiDungLuaChon)}</div>
               </div>
             </div>
           );
