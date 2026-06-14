@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TbSearch, TbTrash, TbArrowsExchange } from "react-icons/tb";
+import { TbSearch, TbTrash } from "react-icons/tb";
 import { type TaiKhoanNguoiDung } from "../../../../services/apis/adminAPI";
 
 type TabFilter = "ALL" | "GV" | "HS";
@@ -12,10 +12,9 @@ const ROLE_LABEL: Record<string, string> = {
 interface Props {
   danhSach: TaiKhoanNguoiDung[];
   onXoa: (id: number) => void;
-  onDoiVaiTro: (user: TaiKhoanNguoiDung) => void;
 }
 
-const UserTable = ({ danhSach, onXoa, onDoiVaiTro }: Props) => {
+const UserTable = ({ danhSach, onXoa}: Props) => {
   const [tab, setTab] = useState<TabFilter>("ALL");
   const [search, setSearch] = useState("");
 
@@ -102,13 +101,7 @@ const UserTable = ({ danhSach, onXoa, onDoiVaiTro }: Props) => {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => onDoiVaiTro(u)}
-                      className="flex items-center gap-1 px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-                    >
-                      <TbArrowsExchange size={14} />
-                      Đổi vai trò
-                    </button>
+                    
                     <button
                       onClick={() => onXoa(u.id)}
                       className="flex items-center gap-1 px-3 py-1.5 text-xs border border-red-200 rounded-lg text-red-600 hover:bg-red-50 transition-colors"

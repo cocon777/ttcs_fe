@@ -130,6 +130,7 @@ const EditorTopBar = () => {
         ...prev,
         noiDungDe: "Tạo đề thất bại, vui lòng thử lại!",
       }));
+      toast.error("Tạo đề thất bại, vui lòng thử lại!");
     } finally {
       setIsSubmitting(false);
     }
@@ -151,6 +152,7 @@ const EditorTopBar = () => {
       const removeRes = await CreateExamAPI.remove(editDeId);
       if (removeRes?.status !== 200) {
         throw new Error("Xóa đề cũ thất bại");
+        toast.error("Xóa đề cũ thất bại");
       }
 
       // 2. Tạo đề mới với nội dung đã sửa
@@ -181,6 +183,7 @@ const EditorTopBar = () => {
         ...prev,
         noiDungDe: "Cập nhật đề thất bại, vui lòng thử lại!",
       }));
+      toast.error("Sửa đề thất bại, vui lòng thử lại!");
     } finally {
       setIsSubmitting(false);
     }

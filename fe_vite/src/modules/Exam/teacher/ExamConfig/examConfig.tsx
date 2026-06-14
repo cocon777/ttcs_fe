@@ -7,6 +7,7 @@ import type {
   De,
   LopHocRef,
 } from "../../../../share/interfaces/exam.interface";
+import toast from "react-hot-toast";
 
 const ExamConfig = () => {
   const navigate = useNavigate();
@@ -39,8 +40,8 @@ const ExamConfig = () => {
       //xoa localStorage
       localStorage.removeItem("exam");
       localStorage.removeItem("exam_json");
-
-      navigate(`/teacher/exam/exam-publish/${updated.maHash}`);
+      toast.success("Xuất bản/Cập nhật cấu hình đề thành công");
+      navigate(`/teacher/exam/exam-infor/${updated.id}`);
     }
   };
 

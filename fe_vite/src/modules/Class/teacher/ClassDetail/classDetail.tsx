@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   CalendarCheck,
   Newspaper,
@@ -25,6 +27,7 @@ const ClassDetail = () => {
 
   const [classInfo, setClassInfo] = useState<StudentClass | null>(null);
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchClassInfo = async () => {
@@ -115,6 +118,12 @@ const ClassDetail = () => {
               <div className="text-sm font-medium">{tab.label}</div>
             </div>
           ))}
+          <button
+            className="ml-4 px-4 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold rounded-lg shadow transition-colors"
+            onClick={() => navigate(-1)}
+          >
+            ← Quay lại
+          </button>
         </div>
       </div>
 

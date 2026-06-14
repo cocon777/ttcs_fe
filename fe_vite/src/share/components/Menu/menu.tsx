@@ -1,57 +1,3 @@
-// import { LogOut } from "lucide-react";
-// import { useState, useEffect, useCallback } from "react";
-// import { useNavigate } from "react-router-dom";
-// import UserAPI from "../../../services/apis/userAPI";
-// import AuthAPI from "../../../services/apis/authAPI";
-// import type { NguoiDung } from "../../interfaces/user.interface";
-// // import UserAvatar from "../userAvatar";
-
-// const Menu = () => {
-//   const navigate = useNavigate();
-//   const [user, setUser] = useState<NguoiDung>({} as NguoiDung);
-
-//   const fetchUserInfo = useCallback(async () => {
-//     try {
-//       const response = await UserAPI.getInfo();
-//       if (response?.status === 200) {
-//         setUser(response.data);
-//       }
-//     } catch (error) {
-//       console.error("Error fetching user info:", error);
-//     }
-//   }, []);
-
-//   useEffect(() => {
-//     fetchUserInfo();
-//   }, [fetchUserInfo]);
-
-//   const handleLogout = useCallback(() => {
-//     AuthAPI.logout();
-//     navigate("/auth/login", { replace: true });
-//   }, [navigate]);
-
-//   return (
-//     <div className="flex items-center gap-3 pr-4">
-//       {/* {user?.ten && <UserAvatar ten={user.ten} />} */}
-
-//       <div className="text-sm font-medium text-slate-800 dark:text-gray-300">
-//         {user.ten}
-//       </div>
-
-//       <button
-//         type="button"
-//         onClick={handleLogout}
-//         className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-darkmode-400"
-//       >
-//         <LogOut strokeWidth={1.5} className="size-4" />
-//         Đăng xuất
-//       </button>
-//     </div>
-//   );
-// };
-
-// export default Menu;
-
 import { LogOut, User, ChevronDown } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -106,7 +52,7 @@ const Menu = () => {
 
   return (
     <div ref={ref} className="relative">
-      {/* ===== Trigger button ===== */}
+      {/*  Trigger */}
       <button
         onClick={() => setIsOpen((v) => !v)}
         className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -137,21 +83,24 @@ const Menu = () => {
         />
       </button>
 
-      {/* ===== Dropdown panel ===== */}
+      {/*  Dropdown */}
       {isOpen && (
         <div className="absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
-          {/* Tài khoản */}
-          <div className="p-1.5">
-            <button
-              onClick={goToAccount}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
-            >
-              <User className="size-4" strokeWidth={1.5} />
-              Tài khoản
-            </button>
-          </div>
-
-          <div className="mx-3 border-t border-slate-100 dark:border-slate-700" />
+          {/* Tài khoản — ẩn với Admin */}
+          {user.vaiTro !== VaiTro.ADMIN && (
+            <>
+              <div className="p-1.5">
+                <button
+                  onClick={goToAccount}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  <User className="size-4" strokeWidth={1.5} />
+                  Tài khoản
+                </button>
+              </div>
+              <div className="mx-3 border-t border-slate-100 dark:border-slate-700" />
+            </>
+          )}
 
           {/* Đăng xuất */}
           <div className="p-1.5">
@@ -167,6 +116,6 @@ const Menu = () => {
       )}
     </div>
   );
-};;
+};
 
 export default Menu;

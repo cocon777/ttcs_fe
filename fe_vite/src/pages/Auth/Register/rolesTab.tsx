@@ -23,15 +23,16 @@ const RoleTabs: React.FC<RoleTabsProps> = (props) => {
       {ROLETABS.map((tab) => (
         <div
           onClick={() => onChange("vaiTro", tab.value)}
-          className="flex-1 py-2 hover:cursor-pointer"
+          className={`flex-1 py-2 hover:cursor-pointer border-b-2 transition-colors ${
+            values["vaiTro"] === tab.value
+              ? "border-blue-600"
+              : "border-transparent"
+          }`}
         >
           <div
-            className={
-              "flex items-center justify-center gap-2 " +
-              (values["vaiTro"] === tab.value
-                ? "text-blue-800"
-                : "text-gray-400")
-            }
+            className={`flex items-center justify-center gap-2 ${
+              values["vaiTro"] === tab.value ? "text-blue-800" : "text-gray-400"
+            }`}
           >
             <div className="text-sm font-semibold">{tab.label}</div>
           </div>

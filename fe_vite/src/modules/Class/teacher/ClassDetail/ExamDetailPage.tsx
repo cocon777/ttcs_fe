@@ -113,7 +113,7 @@ const ExamDetailPage = () => {
                 onClick={() => navigate(`/teacher/exam/exam-infor/${examId}`)}
                 className="text-sm font-medium underline"
               >
-                Cấu hình đề
+                Thông tin đề
               </div>
             </div>
           </div>

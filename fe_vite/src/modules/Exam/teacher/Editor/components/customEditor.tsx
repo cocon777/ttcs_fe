@@ -33,7 +33,7 @@ const CustomEditor = forwardRef<CustomEditorHandle, CustomEditorProps>(
       },
     }));
 
-    // ── Paste ảnh từ clipboard ──────────────────────────────
+    //  Paste ảnh từ clipboard
     const setupPasteListener = (editor: any) => {
       const domNode: HTMLElement | null = editor.getDomNode();
       if (!domNode) return;
@@ -91,7 +91,7 @@ const CustomEditor = forwardRef<CustomEditorHandle, CustomEditorProps>(
       });
     };
 
-    // ── Editor mount ────────────────────────────────────────
+    //  Editor mount
     const editorDidMount = (editor: any) => {
       editorRef.current = editor;
       editor.focus();
@@ -104,7 +104,7 @@ const CustomEditor = forwardRef<CustomEditorHandle, CustomEditorProps>(
       setupPasteListener(editor);
     };
 
-    // ── GoTo line ───────────────────────────────────────────
+    //  GoTo line
     useEffect(() => {
       if (goToLine && editorRef.current) {
         editorRef.current.revealLineInCenter(goToLine);
@@ -139,6 +139,7 @@ const CustomEditor = forwardRef<CustomEditorHandle, CustomEditorProps>(
             [/^[A-G]\./, "custom-lua-chon"],
             // Highlight tag ảnh
             [/\[img:\$[^\$]*\$\]/, "custom-image-tag"],
+            [/\$\$[^$]*\$\$/, "custom-formula"],
           ],
         },
       });
@@ -161,6 +162,10 @@ const CustomEditor = forwardRef<CustomEditorHandle, CustomEditorProps>(
             token: "custom-image-tag",
             foreground: "7c3aed",
             fontStyle: "italic",
+          },
+          {
+            token: "custom-formula",
+            foreground: "8f4106",
           },
         ],
         colors: {},

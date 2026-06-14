@@ -67,7 +67,7 @@ const ClassDetailPage = () => {
           </div>
         </div>
         <Link
-          to="/student/class"
+          to="/student/classroom"
           className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 transition hover:bg-slate-50 dark:border-darkmode-400 dark:text-slate-300 dark:hover:bg-darkmode-400"
         >
           ← Quay lại

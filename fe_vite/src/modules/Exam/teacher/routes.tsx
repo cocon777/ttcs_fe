@@ -4,7 +4,6 @@ import ExamManagement from "./ExamManagement/examManagement";
 import Editor from "./Editor/editor";
 import ExamInfor from "./ExamInfor/examInfor";
 import ExamConfig from "./ExamConfig/examConfig";
-import PublishExam from "./PublishExam/publishExam";
 const ExamRoutes = {
   path: "exam",
   children: [
@@ -17,10 +16,6 @@ const ExamRoutes = {
         {
           path: "exam-config/:deId",
           element: <ExamConfig />,
-        },
-        {
-          path: "exam-publish/:maHash",
-          element: <PublishExam />,
         },
       ],
     },

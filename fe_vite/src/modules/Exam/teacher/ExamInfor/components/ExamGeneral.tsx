@@ -49,8 +49,8 @@ export const ExamGeneral: React.FC<ExamGeneralProps> = ({ de }) => {
         <div className="flex items-center gap-2">
           <Clock strokeWidth={1.5} className="size-4" />
           <div className="text-sm">
-            <strong>Thời gian làm bài:</strong> {de.thoiGian}{" "}
-            <strong>phút</strong>
+            <strong>Thời gian làm bài:</strong>{" "}
+            {de.thoiGian ? de.thoiGian : "--"} <strong>phút</strong>
           </div>
         </div>
 
@@ -65,7 +65,16 @@ export const ExamGeneral: React.FC<ExamGeneralProps> = ({ de }) => {
           <CheckCircle strokeWidth={1.5} className="size-4" />
           <div className="text-sm">
             <strong>Trạng thái:</strong>{" "}
-            {de.daXuatBan ? "Đã xuất bản" : "Chưa xuất bản"}
+            {/* {de.daXuatBan ? "Đã xuất bản" : "Chưa xuất bản"} */}
+            {de.daXuatBan ? (
+              <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-700">
+                Đã xuất bản
+              </span>
+            ) : (
+              <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-red-500">
+                Chưa xuất bản
+              </span>
+            )}
           </div>
         </div>
 

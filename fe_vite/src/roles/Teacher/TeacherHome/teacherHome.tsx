@@ -73,9 +73,12 @@ const TeacherHome: React.FC = () => {
           <h1 className="mb-1 text-xl font-semibold text-gray-900">
             Xin chào {tenGiaoVien || "..."}
           </h1>
+          <p className="text-lg leading-relaxed text-black-500">
+            HỆ THỐNG QUẢN LÝ HỌC TẬP VÀ LUYỆN TẬP TRẮC NGHIỆM TRỰC TUYẾN
+          </p>
           <p className="text-sm leading-relaxed text-gray-500">
-            Hệ thống hỗ trợ giảng dạy trực tuyến — quản lý lớp học,tạo đề thi,
-            theo dõi kết quả và cung cấp phản hồi cho học sinh.
+            Quản lý lớp học,tạo đề thi, theo dõi kết quả và cung cấp phản hồi
+            cho giáo viên/học sinh.
           </p>
         </div>
       </div>
